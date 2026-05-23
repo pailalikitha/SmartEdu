@@ -1,11 +1,5 @@
-import { PlaceholderPage } from "@/components/shared";
+import { WeakTopicsPage } from "@/features/student/weak-topics/components/weak-topics-page";
 
 export default function StudentWeakTopicsPage() {
-  return (
-    <PlaceholderPage
-      title="Weak Topics"
-      description="AI-detected weak areas with severity and resources."
-      moduleLabel="Weak Topics"
-    />
-  );
+  return <WeakTopicsPage />;
 }

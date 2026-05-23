@@ -1,11 +1,5 @@
-import { PlaceholderPage } from "@/components/shared";
+import { TeacherAnalyticsPage } from "@/features/teacher/analytics/components/teacher-analytics-page";
 
-export default function TeacherAnalyticsPage() {
-  return (
-    <PlaceholderPage
-      title="Class Analytics"
-      description="Student performance tables and heatmaps."
-      moduleLabel="Class Analytics"
-    />
-  );
+export default function TeacherAnalyticsPageRoute() {
+  return <TeacherAnalyticsPage />;
 }

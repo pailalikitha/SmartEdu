@@ -1,11 +1,5 @@
-import { PlaceholderPage } from "@/components/shared";
+import { ReadinessPage } from "@/features/student/readiness/components/readiness-page";
 
 export default function StudentReadinessPage() {
-  return (
-    <PlaceholderPage
-      title="Competitive Readiness"
-      description="JEE, NEET, Olympiad, and Board readiness scores."
-      moduleLabel="Competitive Readiness"
-    />
-  );
+  return <ReadinessPage />;
 }

@@ -9,6 +9,11 @@ export const COLLECTIONS = {
   weakTopics: "weakTopics",
   activityLog: "activityLog",
   uploadHistory: "uploadHistory",
+  notifications: "notifications",
+} as const;
+
+export const NOTIFICATION_SUBCOLLECTIONS = {
+  items: "items",
 } as const;
 
 /** Nested under `attendance/{date}/classes/{classId}/students/{studentId}` */

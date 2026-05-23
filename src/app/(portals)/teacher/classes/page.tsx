@@ -1,11 +1,5 @@
-import { PlaceholderPage } from "@/components/shared";
+import { TeacherClassesPage } from "@/features/teacher/classes/components/teacher-classes-page";
 
-export default function TeacherClassesPage() {
-  return (
-    <PlaceholderPage
-      title="My Classes"
-      description="Assigned classes and sections."
-      moduleLabel="Classes"
-    />
-  );
+export default function TeacherClassesPageRoute() {
+  return <TeacherClassesPage />;
 }

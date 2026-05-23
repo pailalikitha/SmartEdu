@@ -1,11 +1,5 @@
-import { PlaceholderPage } from "@/components/shared";
+import { TeacherAssistantPage } from "@/features/teacher/assistant/components/teacher-assistant-page";
 
-export default function TeacherAssistantPage() {
-  return (
-    <PlaceholderPage
-      title="AI Teacher Assistant"
-      description="Lesson plans, activities, homework, and revision aids."
-      moduleLabel="AI Teacher Assistant"
-    />
-  );
+export default function TeacherAssistantPageRoute() {
+  return <TeacherAssistantPage />;
 }
