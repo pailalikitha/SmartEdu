@@ -1,0 +1,9 @@
+export { AdminDashboard } from "@/components/dashboard/admin-dashboard";
+export { AnalyticsSection } from "@/components/dashboard/analytics-section";
+export { BarChart, type BarChartItem } from "@/components/dashboard/bar-chart";
+export { DashboardGreeting } from "@/components/dashboard/dashboard-greeting";
+export { DashboardPage } from "@/components/dashboard/dashboard-page";
+export { RecentActivity, type Activity } from "@/components/dashboard/recent-activity";
+export { StatCard } from "@/components/dashboard/stat-card";
+export { StudentDashboard } from "@/components/dashboard/student-dashboard";
+export { TeacherDashboard } from "@/components/dashboard/teacher-dashboard";
