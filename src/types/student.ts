@@ -10,6 +10,10 @@ export type Student = {
   section: string;
   /** Denormalized `grade_section` for indexed class queries */
   classKey?: string;
+  /** Assigned class document id from `classes` collection */
+  classId?: string;
+  /** Firebase Auth UID when it differs from the student document id */
+  authUserId?: string;
   guardianName?: string;
   guardianContact?: string;
   status: StudentStatus;

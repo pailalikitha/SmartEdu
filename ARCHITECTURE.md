@@ -58,6 +58,14 @@ src/
 | `students` | auto | `status`, `classKey` (`{grade}_{section}`), `grade` + `orderBy(createdAt)` | Denormalized `classKey` on write |
 | `attendance` | `{studentId}_{date}` | `date`, `yearMonth`, `classKey` | Monthly reports use `yearMonth` partition |
 | `studyTasks` | `{studentId}_{YYYYMMDD}_{HHmm}` (AI) or auto (manual) | `studentId` + `weekKey` (Monday ISO date) | Week-scoped reads; batched creates |
+| `marks/{uid}/entries` | auto | — | `subject`, `score` (number) |
+| `weakTopics/{uid}/topics` | auto | — | `score` (number); weak if &lt; 60 |
+| `activityLog/{uid}/logs` | auto | `timestamp` desc | `title`, `description`, `type`, `timestamp` |
+
+Student dashboard queries use the signed-in user’s **Firebase Auth UID** as `{uid}` / `studentId`.
+
+| `classes` | auto | `teacherId` | Teacher dashboard: classes assigned to signed-in teacher |
+| `students.classId` | — | indexed with `classId` | Links enrolment to a `classes` document |
 
 - Shared helpers: `src/lib/firebase/firestore/` (`queryCollection`, `runBatchedSet`, limits)
 - Composite indexes: `firestore.indexes.json` — deploy with `firebase deploy --only firestore:indexes`

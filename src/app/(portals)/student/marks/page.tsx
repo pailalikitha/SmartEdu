@@ -1,11 +1,11 @@
-import { PlaceholderPage } from "@/components/shared";
+import type { Metadata } from "next";
 
-export default function StudentMarksPage() {
-  return (
-    <PlaceholderPage
-      title="Marks Analysis"
-      description="Subject performance, exam history, and trends."
-      moduleLabel="Marks Analysis"
-    />
-  );
+import { StudentMarksPage } from "@/features/student/marks";
+
+export const metadata: Metadata = {
+  title: "Marks Analysis",
+};
+
+export default function StudentMarksRoutePage() {
+  return <StudentMarksPage />;
 }

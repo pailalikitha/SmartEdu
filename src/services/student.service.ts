@@ -9,7 +9,11 @@ import {
   type DocumentData,
 } from "firebase/firestore";
 
-import { COLLECTIONS } from "@/lib/firebase/firestore/constants";
+import {
+  COLLECTIONS,
+  FIRESTORE_IN_QUERY_LIMIT,
+} from "@/lib/firebase/firestore/constants";
+import { chunkArray } from "@/lib/firebase/firestore/chunks";
 import {
   buildClassKey,
   toDate,
@@ -41,6 +45,8 @@ function mapStudentDoc(id: string, data: DocumentData): Student {
     grade: String(data.grade ?? ""),
     section: String(data.section ?? ""),
     classKey: data.classKey ? String(data.classKey) : undefined,
+    classId: data.classId ? String(data.classId) : undefined,
+    authUserId: data.authUserId ? String(data.authUserId) : undefined,
     guardianName: data.guardianName ? String(data.guardianName) : undefined,
     guardianContact: data.guardianContact
       ? String(data.guardianContact)
@@ -110,6 +116,30 @@ export async function listActiveStudentsByClass(
     grade,
     section,
   });
+}
+
+export async function listStudentsByClassIds(
+  classIds: string[],
+): Promise<Student[]> {
+  if (classIds.length === 0) return [];
+
+  const uniqueIds = [...new Set(classIds)];
+  const students: Student[] = [];
+
+  for (const chunk of chunkArray(uniqueIds, FIRESTORE_IN_QUERY_LIMIT)) {
+    const { items } = await queryCollection({
+      collectionPath: COLLECTIONS.students,
+      constraints: [where("classId", "in", chunk)],
+      mapDoc: mapStudentDoc,
+    });
+    students.push(...items);
+  }
+
+  return students;
+}
+
+export function getMarksStudentId(student: Student): string {
+  return student.authUserId ?? student.id;
 }
 
 export async function createStudent(input: StudentInput): Promise<Student> {

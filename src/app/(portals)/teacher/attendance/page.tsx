@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
-import { AttendanceTracking } from "@/features/attendance";
+import { TeacherAttendancePage } from "@/features/teacher/attendance";
 
 export const metadata: Metadata = {
   title: "Attendance",
 };
 
-export default function TeacherAttendancePage() {
-  return <AttendanceTracking />;
+export default function TeacherAttendanceRoutePage() {
+  return <TeacherAttendancePage />;
 }

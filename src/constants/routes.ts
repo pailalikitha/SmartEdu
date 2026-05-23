@@ -17,6 +17,7 @@ export const ROUTES = {
     classes: "/teacher/classes",
     analytics: "/teacher/analytics",
     assistant: "/teacher/assistant",
+    uploadData: "/teacher/upload-data",
   },
   admin: {
     root: "/admin",

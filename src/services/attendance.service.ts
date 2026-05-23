@@ -64,6 +64,27 @@ function toFirestoreAttendance(input: AttendanceInput): DocumentData {
   };
 }
 
+export async function listAttendanceForStudent(
+  studentId: string,
+): Promise<AttendanceRecord[]> {
+  const db = requireFirestore();
+  const q = query(
+    collection(db, COLLECTIONS.attendance),
+    where("studentId", "==", studentId),
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((d) => mapAttendanceDoc(d.id, d.data()));
+}
+
+/** Returns `null` when the student has no attendance records. */
+export function calculateAttendancePercent(
+  records: AttendanceRecord[],
+): number | null {
+  if (records.length === 0) return null;
+  const presentCount = records.filter((r) => r.status === "present").length;
+  return Math.round((presentCount / records.length) * 1000) / 10;
+}
+
 export async function getAttendanceForDate(
   date: string,
   filters: AttendanceQueryFilters = {},

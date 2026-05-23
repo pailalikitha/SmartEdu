@@ -6,6 +6,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { DashboardEmptyPlaceholder } from "@/components/dashboard/dashboard-empty-placeholder";
 import {
   Card,
   CardContent,
@@ -55,6 +56,11 @@ export function RecentActivity({
         <CardDescription>Latest updates across your academics</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 p-0">
+        {items.length === 0 ? (
+          <div className="p-4">
+            <DashboardEmptyPlaceholder minHeight="min-h-[12rem]" />
+          </div>
+        ) : (
         <ul className="divide-y divide-border/60">
           {items.map((item) => {
             const { icon: Icon, className: iconClass } =
@@ -88,6 +94,7 @@ export function RecentActivity({
             );
           })}
         </ul>
+        )}
       </CardContent>
     </Card>
   );

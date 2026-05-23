@@ -31,14 +31,51 @@ service cloud.firestore {
       allow update: if isSignedIn() && request.auth.uid == userId;
     }
 
-    match /students/{studentId} {
-      allow read: if isStaff();
+    match /classes/{classId} {
+      allow read: if isPrincipal()
+        || (isTeacher() && resource.data.teacherId == request.auth.uid);
       allow create, update, delete: if isPrincipal();
     }
 
-    match /attendance/{recordId} {
-      allow read, create, update: if isStaff();
+    match /students/{studentId} {
+      allow read: if isStaff();
+      allow create, update: if isStaff();
       allow delete: if isPrincipal();
+    }
+
+    match /attendance/{recordId} {
+      allow read: if isStaff()
+        || (isStudent() && resource.data.studentId == request.auth.uid);
+      allow create, update: if isStaff();
+      allow delete: if isPrincipal();
+    }
+
+    match /attendance/{date}/classes/{classId}/students/{studentId} {
+      allow read: if isStaff();
+      allow create, update: if isPrincipal()
+        || (isTeacher() && request.resource.data.teacherId == request.auth.uid);
+      allow delete: if isPrincipal();
+    }
+
+    match /uploadHistory/{teacherId}/logs/{logId} {
+      allow read, create: if isSignedIn() && request.auth.uid == teacherId;
+      allow update, delete: if isPrincipal();
+    }
+
+    match /marks/{studentId}/entries/{entryId} {
+      allow read: if isStaff()
+        || (isSignedIn() && request.auth.uid == studentId);
+      allow write: if isStaff();
+    }
+
+    match /weakTopics/{studentId}/topics/{topicId} {
+      allow read: if isSignedIn() && request.auth.uid == studentId;
+      allow write: if isStaff();
+    }
+
+    match /activityLog/{studentId}/logs/{logId} {
+      allow read: if isSignedIn() && request.auth.uid == studentId;
+      allow write: if isStaff();
     }
 
     match /studyTasks/{taskId} {

@@ -11,6 +11,7 @@ import {
   School,
   Sparkles,
   Target,
+  Upload,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -25,6 +26,7 @@ const NAV_ICON_MAP: Record<string, LucideIcon> = {
   [ROUTES.student.studyPlanner]: Calendar,
   [ROUTES.teacher.dashboard]: LayoutDashboard,
   [ROUTES.teacher.attendance]: CalendarCheck,
+  [ROUTES.teacher.uploadData]: Upload,
   [ROUTES.teacher.classes]: Users,
   [ROUTES.teacher.analytics]: BarChart3,
   [ROUTES.teacher.assistant]: Sparkles,

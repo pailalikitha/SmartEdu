@@ -2,6 +2,7 @@ export { AdminDashboard } from "@/components/dashboard/admin-dashboard";
 export { AnalyticsSection } from "@/components/dashboard/analytics-section";
 export { BarChart, type BarChartItem } from "@/components/dashboard/bar-chart";
 export { DashboardGreeting } from "@/components/dashboard/dashboard-greeting";
+export { DashboardEmptyPlaceholder } from "@/components/dashboard/dashboard-empty-placeholder";
 export { DashboardPage } from "@/components/dashboard/dashboard-page";
 export { RecentActivity, type Activity } from "@/components/dashboard/recent-activity";
 export { StatCard } from "@/components/dashboard/stat-card";
