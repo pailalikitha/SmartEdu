@@ -14,6 +14,8 @@ export type UserProfile = {
   displayName: string;
   role: UserRole;
   schoolId?: string;
+  photoURL?: string | null;
+  status?: "active" | "inactive";
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
 };
@@ -45,4 +47,15 @@ export async function ensureUserProfile(
   if (existing) return existing;
   await createUserProfile(uid, data);
   return { ...data };
+}
+
+export async function updateUserProfile(
+  uid: string,
+  patch: Partial<Pick<UserProfile, "displayName" | "photoURL">>,
+): Promise<void> {
+  const { updateDoc } = await import("firebase/firestore");
+  await updateDoc(doc(getFirebaseDb(), USERS_COLLECTION, uid), {
+    ...patch,
+    updatedAt: serverTimestamp(),
+  });
 }

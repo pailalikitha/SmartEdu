@@ -16,6 +16,8 @@
     "clsx": "^2.1.1",
     "firebase": "^12.13.0",
     "firebase-admin": "^13.10.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
     "lucide-react": "^1.16.0",
     "next": "16.2.6",
     "papaparse": "^5.5.3",
@@ -25,11 +27,13 @@
     "recharts": "^3.8.1",
     "tailwind-merge": "^3.3.1",
     "tw-animate-css": "^1.2.5",
+    "xlsx": "^0.18.5",
     "zod": "^4.4.3",
     "zustand": "^5.0.13"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/html2canvas": "^0.5.35",
     "@types/node": "^20",
     "@types/papaparse": "^5.5.2",
     "@types/react": "^19",

@@ -67,6 +67,42 @@ export async function uploadMarksRows(
 
   try {
     await runBatchedSet(db, operations);
+
+    const byStudentSubject = new Map<
+      string,
+      { subject: string; scores: number[] }
+    >();
+
+    for (const row of rows) {
+      const pct = computeScore(row.marksObtained, row.totalMarks);
+      const key = `${row.studentId}::${row.subject}`;
+      const current = byStudentSubject.get(key) ?? {
+        subject: row.subject,
+        scores: [],
+      };
+      current.scores.push(pct);
+      byStudentSubject.set(key, current);
+    }
+
+    for (const [key, { subject, scores }] of byStudentSubject) {
+      const studentId = key.split("::")[0];
+      const { notifyMarksUploaded } = await import(
+        "@/services/notifications.service"
+      );
+      await notifyMarksUploaded([studentId], subject);
+
+      const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+      if (avg < 60) {
+        const { notifyWeakSubject } = await import(
+          "@/services/notifications.service"
+        );
+        await notifyWeakSubject(
+          studentId,
+          subject,
+          Math.round(avg * 10) / 10,
+        );
+      }
+    }
   } catch (err) {
     summary.failureCount += summary.successCount;
     summary.successCount = 0;

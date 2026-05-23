@@ -1,6 +1,8 @@
 /** Top-level Firestore collection names */
 export const COLLECTIONS = {
   users: "users",
+  teachers: "teachers",
+  parents: "parents",
   students: "students",
   classes: "classes",
   attendance: "attendance",
@@ -10,6 +12,22 @@ export const COLLECTIONS = {
   activityLog: "activityLog",
   uploadHistory: "uploadHistory",
   notifications: "notifications",
+  assignments: "assignments",
+  settings: "settings",
+  schoolActivity: "schoolActivity",
+} as const;
+
+export const ASSIGNMENT_SUBCOLLECTIONS = {
+  tasks: "tasks",
+  submissions: "submissions",
+} as const;
+
+export const PARENT_SUBCOLLECTIONS = {
+  alertSettings: "alertSettings",
+} as const;
+
+export const SETTINGS_DOCS = {
+  school: "school",
 } as const;
 
 export const NOTIFICATION_SUBCOLLECTIONS = {
@@ -36,6 +54,8 @@ export const STUDENT_SUBCOLLECTIONS = {
 } as const;
 
 export const DASHBOARD_ACTIVITY_LIMIT = 5;
+
+export const SCHOOL_ACTIVITY_LIMIT = 10;
 
 /** Default page size for list queries (stay under 1 MiB per response) */
 export const DEFAULT_QUERY_LIMIT = 200;

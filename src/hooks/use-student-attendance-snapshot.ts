@@ -19,7 +19,14 @@ function mapAttendanceDoc(
     grade: String(data.grade ?? ""),
     section: String(data.section ?? ""),
     date: String(data.date ?? ""),
-    status: data.status === "present" ? "present" : "absent",
+    status:
+      data.status === "present"
+        ? "present"
+        : data.status === "late"
+          ? "late"
+          : data.status === "excused"
+            ? "excused"
+            : "absent",
     markedBy: data.markedBy ? String(data.markedBy) : undefined,
   };
 }

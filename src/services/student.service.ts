@@ -51,6 +51,7 @@ function mapStudentDoc(id: string, data: DocumentData): Student {
     guardianContact: data.guardianContact
       ? String(data.guardianContact)
       : undefined,
+    parentEmail: data.parentEmail ? String(data.parentEmail) : undefined,
     status: data.status === "inactive" ? "inactive" : "active",
     createdAt: toDate(data.createdAt as Timestamp | undefined),
     updatedAt: toDate(data.updatedAt as Timestamp | undefined),

@@ -7,6 +7,8 @@ import { X } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 import { getNavIcon } from "@/components/layout/nav-icons";
 import type { NavItem } from "@/constants/navigation";
+import { PROFILE_HREF_BY_ROLE } from "@/constants/navigation";
+import type { UserRole } from "@/constants/roles";
 import { useLockBodyScroll } from "@/hooks/use-lock-body-scroll";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +16,7 @@ type SidebarProps = {
   items: NavItem[];
   portalLabel: string;
   portalRoot: string;
+  portalRole?: UserRole;
   isOpen?: boolean;
   onClose?: () => void;
 };
@@ -28,10 +31,14 @@ export function Sidebar({
   items,
   portalLabel,
   portalRoot,
+  portalRole,
   isOpen = false,
   onClose,
 }: SidebarProps) {
   const pathname = usePathname();
+  const profileHref = portalRole
+    ? PROFILE_HREF_BY_ROLE[portalRole]
+    : items.find((i) => i.href.includes("/profile"))?.href ?? null;
   useLockBodyScroll(isOpen);
 
   return (
@@ -103,7 +110,19 @@ export function Sidebar({
           })}
         </nav>
 
-        <div className="safe-pb border-t border-border p-4">
+        <div className="safe-pb space-y-2 border-t border-border p-4">
+          {profileHref ? (
+            <Link
+              href={profileHref}
+              onClick={onClose}
+              className={cn(
+                "flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+                pathname.includes("/profile") && "bg-muted text-foreground",
+              )}
+            >
+              Profile
+            </Link>
+          ) : null}
           <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
             SmartEdu AI · Academic intelligence
           </p>

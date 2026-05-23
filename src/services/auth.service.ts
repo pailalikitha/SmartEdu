@@ -1,5 +1,9 @@
 import {
+  browserLocalPersistence,
+  browserSessionPersistence,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  setPersistence,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
@@ -12,7 +16,6 @@ import { getFirebaseAuth } from "@/lib/firebase/client";
 import { isFirebaseConfigured } from "@/lib/firebase/config";
 import {
   createUserProfile,
-  ensureUserProfile,
   getUserProfile,
 } from "@/services/user.service";
 import type { User } from "@/types";
@@ -27,6 +30,7 @@ export type SignUpInput = {
 export type SignInInput = {
   email: string;
   password: string;
+  rememberMe?: boolean;
 };
 
 function mapFirebaseUser(firebaseUser: FirebaseUser, role: UserRole): User {
@@ -35,6 +39,7 @@ function mapFirebaseUser(firebaseUser: FirebaseUser, role: UserRole): User {
     email: firebaseUser.email ?? "",
     displayName: firebaseUser.displayName,
     role,
+    photoURL: firebaseUser.photoURL,
   };
 }
 
@@ -43,20 +48,50 @@ export async function mapFirebaseUserWithProfile(
 ): Promise<User> {
   const profile = await getUserProfile(firebaseUser.uid);
 
-  const role = profile?.role ?? "student";
+  if (!profile) {
+    throw new Error("User not found");
+  }
+
   const displayName =
-    firebaseUser.displayName ?? profile?.displayName ?? null;
+    firebaseUser.displayName ?? profile.displayName ?? null;
 
   return {
     id: firebaseUser.uid,
-    email: firebaseUser.email ?? profile?.email ?? "",
+    email: firebaseUser.email ?? profile.email ?? "",
     displayName,
-    role,
-    schoolId: profile?.schoolId,
+    role: profile.role,
+    schoolId: profile.schoolId,
+    photoURL: firebaseUser.photoURL ?? profile.photoURL ?? null,
   };
 }
 
-export async function signIn({ email, password }: SignInInput): Promise<User> {
+export async function signIn({
+  email,
+  password,
+  rememberMe = true,
+}: SignInInput): Promise<User> {
+  if (!isFirebaseConfigured()) {
+    throw new Error(
+      "Firebase is not configured. Add keys to .env.local (see .env.example).",
+    );
+  }
+
+  const auth = getFirebaseAuth();
+
+  try {
+    await setPersistence(
+      auth,
+      rememberMe ? browserLocalPersistence : browserSessionPersistence,
+    );
+
+    const credential = await signInWithEmailAndPassword(auth, email, password);
+    return mapFirebaseUserWithProfile(credential.user);
+  } catch (error) {
+    throw new Error(getAuthErrorMessage(error));
+  }
+}
+
+export async function sendPasswordReset(email: string): Promise<void> {
   if (!isFirebaseConfigured()) {
     throw new Error(
       "Firebase is not configured. Add keys to .env.local (see .env.example).",
@@ -64,19 +99,7 @@ export async function signIn({ email, password }: SignInInput): Promise<User> {
   }
 
   try {
-    const credential = await signInWithEmailAndPassword(
-      getFirebaseAuth(),
-      email,
-      password,
-    );
-
-    await ensureUserProfile(credential.user.uid, {
-      email: credential.user.email ?? email,
-      displayName: credential.user.displayName ?? email.split("@")[0],
-      role: "student",
-    });
-
-    return mapFirebaseUserWithProfile(credential.user);
+    await sendPasswordResetEmail(getFirebaseAuth(), email.trim());
   } catch (error) {
     throw new Error(getAuthErrorMessage(error));
   }

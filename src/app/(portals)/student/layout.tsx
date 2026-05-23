@@ -17,6 +17,7 @@ export default function StudentPortalLayout({
           navItems={STUDENT_NAV}
           portalLabel="Student Portal"
           portalRoot={ROUTES.student.root}
+          portalRole={USER_ROLES.student}
         >
           {children}
         </DashboardShell>

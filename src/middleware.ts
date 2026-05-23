@@ -6,6 +6,7 @@ import {
   getRoleHomePath,
   isAuthRoute,
   isProtectedRoute,
+  portalRoleMatchesUser,
   SESSION_COOKIE,
   SESSION_ROLE_COOKIE,
 } from "@/constants/auth";
@@ -29,7 +30,10 @@ export function middleware(request: NextRequest) {
     request.cookies.get(SESSION_ROLE_COOKIE)?.value,
   );
 
-  if (isProtectedRoute(pathname) && !isAuthenticated) {
+  if (
+    (isProtectedRoute(pathname) || pathname === ROUTES.notifications) &&
+    !isAuthenticated
+  ) {
     const loginUrl = new URL(ROUTES.login, request.url);
     loginUrl.searchParams.set("from", pathname);
     return NextResponse.redirect(loginUrl);
@@ -38,7 +42,11 @@ export function middleware(request: NextRequest) {
   if (isAuthenticated && role) {
     const portalRole = getPortalRoleFromPath(pathname);
 
-    if (portalRole && portalRole !== role) {
+    if (
+      portalRole &&
+      !portalRoleMatchesUser(portalRole, role) &&
+      pathname !== ROUTES.notifications
+    ) {
       return NextResponse.redirect(
         new URL(getRoleHomePath(role), request.url),
       );
@@ -59,7 +67,10 @@ export const config = {
     "/student/:path*",
     "/teacher/:path*",
     "/admin/:path*",
+    "/parent/:path*",
+    "/notifications",
     "/login",
     "/register",
+    "/reset-password",
   ],
 };

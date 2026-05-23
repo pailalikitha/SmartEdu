@@ -5,8 +5,18 @@ import { useEffect } from "react";
 
 import { getRoleHomePath } from "@/constants/auth";
 import type { UserRole } from "@/constants/roles";
+import { isAdminRole } from "@/constants/roles";
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/hooks/use-auth";
+import { getUserProfile } from "@/services/user.service";
+
+function roleAllowed(userRole: UserRole, allowed: UserRole[]): boolean {
+  if (allowed.includes(userRole)) return true;
+  if (allowed.some((r) => r === "admin" || r === "principal") && isAdminRole(userRole)) {
+    return true;
+  }
+  return false;
+}
 
 type AuthGuardProps = {
   children: React.ReactNode;
@@ -25,9 +35,16 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
       return;
     }
 
-    if (allowedRoles && !allowedRoles.includes(user.role)) {
+    if (allowedRoles && !roleAllowed(user.role, allowedRoles)) {
       router.replace(getRoleHomePath(user.role));
+      return;
     }
+
+    void getUserProfile(user.id).then((profile) => {
+      if (profile && (profile as { status?: string }).status === "inactive") {
+        router.replace(ROUTES.login);
+      }
+    });
   }, [
     isInitialized,
     isLoading,
@@ -53,7 +70,7 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
     return null;
   }
 
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
+  if (allowedRoles && !roleAllowed(user.role, allowedRoles)) {
     return null;
   }
 

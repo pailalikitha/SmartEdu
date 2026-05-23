@@ -8,6 +8,8 @@ export const loginSchema = z.object({
     .min(1, "Email is required")
     .email("Enter a valid email address"),
   password: z.string().min(1, "Password is required"),
+  roleTab: z.enum(["student", "teacher", "admin", "parent"]),
+  rememberMe: z.boolean().optional(),
 });
 
 export const registerSchema = z.object({
@@ -26,9 +28,19 @@ export const registerSchema = z.object({
   role: z.enum([
     USER_ROLES.student,
     USER_ROLES.teacher,
+    USER_ROLES.admin,
     USER_ROLES.principal,
+    USER_ROLES.parent,
   ]),
+});
+
+export const resetPasswordSchema = z.object({
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Enter a valid email address"),
 });
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
 export type RegisterFormValues = z.infer<typeof registerSchema>;
+export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;

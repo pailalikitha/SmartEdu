@@ -84,7 +84,7 @@ export function DashboardPage({
                 message={emptyStatMessage}
               />
             ) : (
-              <StatCard key={stat.id} {...stat} />
+              <StatCard key={stat.id} {...stat} showLive />
             ),
           )}
         </div>

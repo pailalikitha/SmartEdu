@@ -29,10 +29,10 @@ export function AdminDashboard({ displayName }: AdminDashboardProps) {
       activities={ADMIN_RECENT_ACTIVITY}
       actions={
         <>
-          <Link href={ROUTES.admin.interventions}>
+          <Link href={ROUTES.admin.reports}>
             <Button variant="accent" size="sm">
               <Shield className="size-4" aria-hidden />
-              Interventions
+              Reports
             </Button>
           </Link>
           <Link href={ROUTES.admin.classes}>
@@ -53,9 +53,9 @@ export function AdminDashboard({ displayName }: AdminDashboardProps) {
                 <strong>47 students</strong> flagged for intervention.
               </p>
             </div>
-            <Link href={ROUTES.admin.interventions}>
+            <Link href={ROUTES.admin.reports}>
               <Button size="sm" className="w-full sm:w-auto">
-                Review interventions
+                View reports
               </Button>
             </Link>
           </CardContent>

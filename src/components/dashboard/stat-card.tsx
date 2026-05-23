@@ -11,6 +11,7 @@ type StatCardProps = {
   trend: "up" | "down" | "neutral";
   icon: LucideIcon;
   accent?: "blue" | "yellow";
+  showLive?: boolean;
 };
 
 const trendStyles = {
@@ -32,6 +33,7 @@ export function StatCard({
   trend,
   icon: Icon,
   accent = "blue",
+  showLive = false,
 }: StatCardProps) {
   const Trend = TrendIcon[trend];
 
@@ -43,7 +45,15 @@ export function StatCard({
       <CardContent className="pt-1">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium text-muted-foreground">{title}</p>
+              {showLive ? (
+                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-success">
+                  <span className="size-1.5 rounded-full bg-success" aria-hidden />
+                  Live
+                </span>
+              ) : null}
+            </div>
             <p className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
               {value}
             </p>

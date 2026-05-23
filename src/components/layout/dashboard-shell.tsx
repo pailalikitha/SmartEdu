@@ -6,12 +6,14 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Header } from "@/components/layout/header";
 import { Sidebar } from "@/components/layout/sidebar";
 import type { NavItem } from "@/constants/navigation";
+import type { UserRole } from "@/constants/roles";
 
 type DashboardShellProps = {
   children: ReactNode;
   navItems: NavItem[];
   portalLabel: string;
   portalRoot: string;
+  portalRole?: UserRole;
   title?: string;
 };
 
@@ -29,6 +31,7 @@ export function DashboardShell({
   navItems,
   portalLabel,
   portalRoot,
+  portalRole,
   title,
 }: DashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -51,6 +54,7 @@ export function DashboardShell({
         items={navItems}
         portalLabel={portalLabel}
         portalRoot={portalRoot}
+        portalRole={portalRole}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />

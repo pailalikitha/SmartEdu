@@ -1,11 +1,5 @@
-import { PlaceholderPage } from "@/components/shared";
+import { AdminTeachersPage } from "@/features/admin/teachers/components/admin-teachers-page";
 
-export default function AdminTeachersPage() {
-  return (
-    <PlaceholderPage
-      title="Teacher Analytics"
-      description="Effectiveness scores and improvement metrics."
-      moduleLabel="Teacher Analytics"
-    />
-  );
+export default function AdminTeachersRoute() {
+  return <AdminTeachersPage />;
 }

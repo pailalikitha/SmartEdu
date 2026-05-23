@@ -17,6 +17,7 @@ export default function TeacherPortalLayout({
           navItems={TEACHER_NAV}
           portalLabel="Teacher Portal"
           portalRoot={ROUTES.teacher.root}
+          portalRole={USER_ROLES.teacher}
         >
           {children}
         </DashboardShell>

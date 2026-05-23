@@ -1,6 +1,6 @@
 "use client";
 
-import { GraduationCap, School, Users } from "lucide-react";
+import { GraduationCap, Heart, School, Users } from "lucide-react";
 import type { UseFormRegister } from "react-hook-form";
 
 import { Label } from "@/components/ui";
@@ -16,7 +16,8 @@ const ROLE_OPTIONS: {
 }[] = [
   { value: USER_ROLES.student, icon: GraduationCap },
   { value: USER_ROLES.teacher, icon: Users },
-  { value: USER_ROLES.principal, icon: School },
+  { value: USER_ROLES.admin, icon: School },
+  { value: USER_ROLES.parent, icon: Heart },
 ];
 
 type RoleSelectorProps = {
@@ -29,7 +30,7 @@ export function RoleSelector({ register, value, error }: RoleSelectorProps) {
   return (
     <div className="space-y-2">
       <Label>I am a</Label>
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {ROLE_OPTIONS.map(({ value: roleValue, icon: Icon }) => {
           const selected = value === roleValue;
           return (

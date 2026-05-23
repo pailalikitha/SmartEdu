@@ -1,11 +1,5 @@
-"use client";
+import { AdminDashboardPage } from "@/features/admin/dashboard/components/admin-dashboard-page";
 
-import { AdminDashboard } from "@/components/dashboard/admin-dashboard";
-import { useAuth } from "@/hooks/use-auth";
-
-export default function AdminDashboardPage() {
-  const { user } = useAuth();
-  const displayName = user?.displayName ?? user?.email ?? "Principal";
-
-  return <AdminDashboard displayName={displayName} />;
+export default function AdminDashboardRoute() {
+  return <AdminDashboardPage />;
 }

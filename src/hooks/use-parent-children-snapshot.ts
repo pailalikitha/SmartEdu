@@ -1,0 +1,74 @@
+"use client";
+
+import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { useEffect, useState } from "react";
+
+import { COLLECTIONS } from "@/lib/firebase/firestore/constants";
+import { requireFirestore } from "@/lib/firebase/firestore/query";
+import { useParentStore } from "@/store/parent-store";
+import type { Student } from "@/types/student";
+
+function mapStudent(id: string, data: Record<string, unknown>): Student {
+  return {
+    id,
+    firstName: String(data.firstName ?? ""),
+    lastName: String(data.lastName ?? ""),
+    email: String(data.email ?? ""),
+    rollNumber: String(data.rollNumber ?? ""),
+    grade: String(data.grade ?? ""),
+    section: String(data.section ?? ""),
+    classId: data.classId ? String(data.classId) : undefined,
+    authUserId: data.authUserId ? String(data.authUserId) : undefined,
+    parentEmail: data.parentEmail ? String(data.parentEmail) : undefined,
+    status: data.status === "inactive" ? "inactive" : "active",
+  };
+}
+
+export function useParentChildrenSnapshot(parentEmail: string | undefined) {
+  const setChildren = useParentStore((s) => s.setChildren);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!parentEmail) {
+      setChildren([]);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const db = requireFirestore();
+      const q = query(
+        collection(db, COLLECTIONS.students),
+        where("parentEmail", "==", parentEmail.trim().toLowerCase()),
+      );
+
+      const unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          const children = snapshot.docs.map((d) =>
+            mapStudent(d.id, d.data() as Record<string, unknown>),
+          );
+          setChildren(children.filter((c) => c.status === "active"));
+          setIsLoading(false);
+        },
+        (err) => {
+          console.error(err);
+          setError(err.message);
+          setChildren([]);
+          setIsLoading(false);
+        },
+      );
+
+      return () => unsubscribe();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load children");
+      setIsLoading(false);
+    }
+  }, [parentEmail, setChildren]);
+
+  return { isLoading, error };
+}

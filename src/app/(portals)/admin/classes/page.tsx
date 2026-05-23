@@ -1,11 +1,5 @@
-import { PlaceholderPage } from "@/components/shared";
+import { AdminClassesPage } from "@/features/admin/classes/components/admin-classes-page";
 
-export default function AdminClassesPage() {
-  return (
-    <PlaceholderPage
-      title="Class Comparison"
-      description="Side-by-side performance across all classes."
-      moduleLabel="Class Comparison"
-    />
-  );
+export default function AdminClassesRoute() {
+  return <AdminClassesPage />;
 }

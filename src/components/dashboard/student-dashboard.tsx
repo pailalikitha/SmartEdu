@@ -9,7 +9,9 @@ import type { Activity, ActivityType } from "@/components/dashboard/recent-activ
 import type { DashboardStatSlot } from "@/components/dashboard/dashboard-page";
 import { Button } from "@/components/ui";
 import { ROUTES } from "@/constants/routes";
+import { UpcomingAssignmentsWidget } from "@/features/assignments/components/upcoming-assignments-widget";
 import { useStudentDashboard } from "@/features/student/hooks/use-student-dashboard";
+import { useStudentProfileSnapshot } from "@/hooks/use-student-profile-snapshot";
 import { useAuth } from "@/hooks/use-auth";
 import { formatPercentage, formatRelativeTime } from "@/lib/utils/format";
 
@@ -32,6 +34,7 @@ function mapActivityType(type?: string): ActivityType {
 export function StudentDashboard({ displayName }: StudentDashboardProps) {
   const { user } = useAuth();
   const studentId = user?.id;
+  const { student: profile } = useStudentProfileSnapshot(studentId);
   const { data, isLoading, error } = useStudentDashboard(studentId);
 
   const stats = useMemo((): DashboardStatSlot[] => {
@@ -120,6 +123,11 @@ export function StudentDashboard({ displayName }: StudentDashboardProps) {
           {error}
         </div>
       ) : null}
+
+      <UpcomingAssignmentsWidget
+        studentId={studentId}
+        classId={profile?.classId}
+      />
 
       <DashboardPage
         displayName={displayName}

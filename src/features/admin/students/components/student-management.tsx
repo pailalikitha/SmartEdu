@@ -1,6 +1,6 @@
 "use client";
 
-import { GraduationCap, Plus, RefreshCw, Search } from "lucide-react";
+import { Download, GraduationCap, Plus, RefreshCw, Search } from "lucide-react";
 import { useState } from "react";
 
 import { EmptyState } from "@/components/shared/empty-state";
@@ -64,6 +64,22 @@ export function StudentManagement() {
     setDeleteTarget(null);
   };
 
+  const exportCsv = async () => {
+    const XLSX = await import("xlsx");
+    const rows = students.map((s) => ({
+      Name: getStudentFullName(s),
+      Email: s.email,
+      Roll: s.rollNumber,
+      Grade: s.grade,
+      Section: s.section,
+      Status: s.status,
+    }));
+    const sheet = XLSX.utils.json_to_sheet(rows);
+    const book = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(book, sheet, "Students");
+    XLSX.writeFile(book, "students-export.xlsx");
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -97,6 +113,10 @@ export function StudentManagement() {
             <Text variant="muted" className="text-sm">
               {students.length} of {totalCount} students
             </Text>
+            <Button variant="outline" size="sm" onClick={() => void exportCsv()}>
+              <Download className="size-4" aria-hidden />
+              Export
+            </Button>
             <Button
               variant="outline"
               size="sm"

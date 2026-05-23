@@ -6,6 +6,7 @@ export type User = {
   displayName: string | null;
   role: UserRole;
   schoolId?: string;
+  photoURL?: string | null;
 };
 
 export type ApiResponse<T> = {

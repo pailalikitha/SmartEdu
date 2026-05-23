@@ -1,8 +1,12 @@
 "use client";
 
-import { Bell, LogOut, Menu, Search, User } from "lucide-react";
+import Link from "next/link";
+import { LogOut, Menu, Search } from "lucide-react";
 
+import { NotificationBell } from "@/components/notifications/notification-bell";
 import { Button, Input } from "@/components/ui";
+import { getRoleHomePath } from "@/constants/auth";
+import { ROUTES } from "@/constants/routes";
 import { useLogout } from "@/features/auth/hooks/use-logout";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -19,6 +23,15 @@ export function Header({ title = "Dashboard", onMenuClick }: HeaderProps) {
     user?.displayName?.charAt(0)?.toUpperCase() ??
     user?.email?.charAt(0)?.toUpperCase() ??
     "?";
+
+  const profileHref =
+    user?.role === "student"
+      ? ROUTES.student.profile
+      : user?.role === "teacher"
+        ? ROUTES.teacher.profile
+        : user?.role === "parent"
+          ? ROUTES.parent.profile
+          : getRoleHomePath(user?.role ?? "student");
 
   return (
     <header className="safe-pt sticky top-0 z-30 shrink-0 border-b border-border bg-card/95 shadow-sm backdrop-blur-md">
@@ -51,34 +64,48 @@ export function Header({ title = "Dashboard", onMenuClick }: HeaderProps) {
         </div>
 
         <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="relative"
-            aria-label="Notifications"
-          >
-            <Bell className="size-4" />
-            <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-destructive ring-2 ring-card" />
-          </Button>
+          <NotificationBell />
 
           {user ? (
             <>
-              <div className="hidden items-center gap-2 rounded-full border border-border bg-muted/30 py-1 pr-3 pl-1 lg:flex">
-                <div className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                  {initials}
-                </div>
+              <Link
+                href={profileHref}
+                className="hidden items-center gap-2 rounded-full border border-border bg-muted/30 py-1 pr-3 pl-1 transition-colors hover:bg-muted lg:flex"
+              >
+                {user.photoURL ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={user.photoURL}
+                    alt=""
+                    className="size-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+                    {initials}
+                  </div>
+                )}
                 <span className="max-w-[7rem] truncate text-sm text-foreground xl:max-w-[10rem]">
                   {user.displayName ?? user.email}
                 </span>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                className="lg:hidden"
-                aria-label="Account"
+              </Link>
+              <Link
+                href={profileHref}
+                className="flex size-9 items-center justify-center rounded-full border border-border lg:hidden"
+                aria-label="Profile"
               >
-                <User className="size-4" />
-              </Button>
+                {user.photoURL ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={user.photoURL}
+                    alt=""
+                    className="size-full rounded-full object-cover"
+                  />
+                ) : (
+                  <span className="text-xs font-semibold text-primary">
+                    {initials}
+                  </span>
+                )}
+              </Link>
               <Button
                 variant="ghost"
                 size="sm"
