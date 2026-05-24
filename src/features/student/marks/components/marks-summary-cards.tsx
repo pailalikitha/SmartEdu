@@ -15,7 +15,7 @@ type MarksSummaryCardsProps = {
 
 export function MarksSummaryCards({ summary }: MarksSummaryCardsProps) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+    <div className="dashboard-stats-grid">
       <StatCard
         title="Overall Average"
         value={formatPercentage(summary.overallAverage)}

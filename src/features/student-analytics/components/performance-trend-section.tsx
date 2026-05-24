@@ -13,6 +13,7 @@ import {
 } from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartSurface } from "@/components/ui/chart-surface";
 import { getSubjectColor } from "@/features/student/marks/utils/marks-stats";
 import { buildTrendChartData } from "@/features/teacher/utils/teacher-analytics";
 import { formatDate } from "@/lib/utils/format";
@@ -53,7 +54,7 @@ export function PerformanceTrendSection({
         <CardTitle>Performance trend</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-72 w-full min-h-[16rem]">
+        <ChartSurface>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
@@ -81,7 +82,7 @@ export function PerformanceTrendSection({
               ))}
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        </ChartSurface>
       </CardContent>
     </Card>
   );

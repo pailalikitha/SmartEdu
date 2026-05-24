@@ -21,6 +21,7 @@ import { EmptyStateCard } from "@/components/shared/empty-state-card";
 import { PageHeader } from "@/components/shared/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ChartSurface } from "@/components/ui/chart-surface";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useToast } from "@/components/ui/toast";
@@ -178,7 +179,7 @@ export function TeacherAnalyticsPage() {
         description="Performance trends and at-risk students."
       />
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="dashboard-stats-grid">
         <Card className="border-l-[3px] border-l-primary">
           <CardContent className="pt-1">
             <p className="text-sm text-muted-foreground">Total Students</p>
@@ -238,7 +239,7 @@ export function TeacherAnalyticsPage() {
               Upload marks to see subject analytics
             </p>
           ) : (
-            <div className="h-72 w-full">
+            <ChartSurface>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={analytics.subjectAverages}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -259,7 +260,7 @@ export function TeacherAnalyticsPage() {
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
-            </div>
+            </ChartSurface>
           )}
         </CardContent>
       </Card>
@@ -274,7 +275,7 @@ export function TeacherAnalyticsPage() {
               Add exam dates to marks to see trends.
             </p>
           ) : (
-            <div className="h-72 w-full">
+            <ChartSurface>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={trendData}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -298,7 +299,7 @@ export function TeacherAnalyticsPage() {
                   ))}
                 </LineChart>
               </ResponsiveContainer>
-            </div>
+            </ChartSurface>
           )}
         </CardContent>
       </Card>
@@ -310,8 +311,8 @@ export function TeacherAnalyticsPage() {
           </h2>
           <Badge variant="destructive">{analytics.atRisk.length}</Badge>
         </div>
-        <div className="overflow-x-auto rounded-xl border border-border">
-          <table className="w-full min-w-[720px] text-left text-sm">
+        <div className="table-scroll rounded-xl border border-border">
+          <table className="w-full text-left text-sm">
             <thead className="bg-muted/50 text-muted-foreground">
               <tr>
                 <th className="px-4 py-3 font-medium">Name</th>

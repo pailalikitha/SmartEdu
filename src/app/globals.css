@@ -4,6 +4,10 @@
 /* ─── SmartEdu Design System — Pastel white / blue / yellow ─── */
 
 :root {
+  /* Responsive breakpoints (for reference in custom media queries) */
+  --mobile: 767px;
+  --tablet: 1023px;
+
   /* Surfaces */
   --background: #f8fafc;
   --foreground: #1e293b;
@@ -48,6 +52,33 @@
   --brand-yellow: var(--accent);
   --brand-yellow-dark: #f5d78c;
   --danger: var(--destructive);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f172a;
+    --foreground: #f1f5f9;
+    --card: #1e293b;
+    --card-foreground: #f1f5f9;
+    --popover: #1e293b;
+    --popover-foreground: #f1f5f9;
+    --primary: #7eb8e8;
+    --primary-foreground: #0f172a;
+    --secondary: #1e3a52;
+    --secondary-foreground: #e2e8f0;
+    --accent: #422006;
+    --accent-foreground: #fef3c7;
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8;
+    --border: #334155;
+    --input: #334155;
+    --ring: #7eb8e8;
+    --destructive: #f87171;
+    --success: #4ade80;
+    --warning: #fbbf24;
+    --surface: var(--card);
+    --surface-muted: #172033;
+  }
 }
 
 @theme inline {
@@ -103,6 +134,12 @@
     -webkit-text-size-adjust: 100%;
   }
 
+  @media (prefers-color-scheme: dark) {
+    html {
+      color-scheme: dark;
+    }
+  }
+
   body {
     @apply min-h-dvh overflow-x-hidden bg-background text-foreground antialiased;
     font-family: var(--font-inter), system-ui, sans-serif;
@@ -137,5 +174,94 @@
 
   .safe-pt {
     padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Dashboard stat cards: 1 col mobile, auto-fit tablet/desktop */
+  .dashboard-stats-grid {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .dashboard-stats-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .dashboard-stats-grid {
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+  }
+
+  .table-scroll {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-scroll > table {
+    min-width: var(--table-min-width, 600px);
+  }
+
+  .chart-surface {
+    width: 100%;
+    min-width: 0;
+  }
+
+  @media (max-width: 767px) {
+    .chart-surface {
+      height: 200px;
+      min-height: 200px;
+    }
+
+    .mobile-touch-targets button:not([data-slot="dialog-close"]),
+    .mobile-touch-targets [role="button"]:not([aria-label="Close menu"]):not(
+        [aria-label="Open menu"]
+      ),
+    .mobile-touch-targets input:not([type="checkbox"]):not([type="radio"]),
+    .mobile-touch-targets select,
+    .mobile-touch-targets textarea {
+      min-height: 48px;
+    }
+
+    .mobile-touch-targets input:not([type="checkbox"]):not([type="radio"]),
+    .mobile-touch-targets select,
+    .mobile-touch-targets textarea {
+      width: 100%;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .chart-surface {
+      height: 350px;
+      min-height: 350px;
+    }
+  }
+}
+
+/* Mobile fullscreen modals */
+@media (max-width: 767px) {
+  [data-slot="dialog-content"] {
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    transform: none !important;
+    translate: none !important;
+    border-radius: 0 !important;
+  }
+}
+
+@media (min-width: 768px) {
+  [data-slot="dialog-content"].dialog-desktop {
+    max-width: 600px !important;
   }
 }

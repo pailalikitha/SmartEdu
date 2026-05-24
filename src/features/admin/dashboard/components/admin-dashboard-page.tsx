@@ -14,6 +14,7 @@ import {
 } from "recharts";
 
 import { PageHeader } from "@/components/shared/page-header";
+import { ChartSurface } from "@/components/ui/chart-surface";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useAdminStatsSnapshot } from "@/hooks/use-admin-stats-snapshot";
@@ -63,7 +64,7 @@ export function AdminDashboardPage() {
         <div role="alert" className="text-sm text-destructive">{error}</div>
       ) : null}
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+      <div className="dashboard-stats-grid">
         {statCards.map((card) => (
           <Card key={card.label}>
             <CardContent className="py-4">
@@ -80,10 +81,11 @@ export function AdminDashboardPage() {
           <CardHeader>
             <CardTitle className="text-base">Class-wise marks</CardTitle>
           </CardHeader>
-          <CardContent className="h-64">
+          <CardContent>
             {stats.classMarks.length === 0 ? (
               <p className="text-sm text-muted-foreground">No marks data yet.</p>
             ) : (
+              <ChartSurface>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={stats.classMarks}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -93,6 +95,7 @@ export function AdminDashboardPage() {
                   <Bar dataKey="value" fill="#1a56a8" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
+              </ChartSurface>
             )}
           </CardContent>
         </Card>
@@ -101,7 +104,8 @@ export function AdminDashboardPage() {
           <CardHeader>
             <CardTitle className="text-base">Attendance distribution</CardTitle>
           </CardHeader>
-          <CardContent className="h-64">
+          <CardContent>
+            <ChartSurface>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -120,6 +124,7 @@ export function AdminDashboardPage() {
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
+            </ChartSurface>
           </CardContent>
         </Card>
       </div>

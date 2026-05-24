@@ -153,8 +153,8 @@ export function StudentTable({
 
       {/* Desktop: table */}
       <div className="hidden overflow-hidden rounded-xl border border-border bg-card shadow-sm md:block">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[720px] text-left text-sm">
+        <div className="table-scroll">
+          <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/40">
                 <th className="px-4 py-3 font-medium text-muted-foreground">

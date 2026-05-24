@@ -137,7 +137,7 @@ export function MarksTable({ entries }: MarksTableProps) {
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-border">
+        <div className="table-scroll rounded-lg border border-border">
           <table className="w-full min-w-[48rem] text-sm">
             <thead className="bg-muted/40">
               <tr>

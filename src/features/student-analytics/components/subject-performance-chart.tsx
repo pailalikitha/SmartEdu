@@ -13,6 +13,7 @@ import {
 } from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartSurface } from "@/components/ui/chart-surface";
 import { formatPercentage } from "@/lib/utils/format";
 import type { SubjectAverage } from "@/lib/utils/subject-stats";
 
@@ -53,7 +54,7 @@ export function SubjectPerformanceChart({
         <CardTitle>Subject performance</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-72 w-full min-h-[16rem] sm:h-80">
+        <ChartSurface>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={data}
@@ -78,7 +79,7 @@ export function SubjectPerformanceChart({
               </Bar>
             </BarChart>
           </ResponsiveContainer>
-        </div>
+        </ChartSurface>
       </CardContent>
     </Card>
   );

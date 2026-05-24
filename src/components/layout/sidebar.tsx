@@ -45,17 +45,16 @@ export function Sidebar({
     <>
       <div
         className={cn(
-          "fixed inset-0 z-40 bg-foreground/30 backdrop-blur-sm transition-opacity duration-200 md:hidden",
+          "fixed inset-0 z-40 bg-foreground/30 backdrop-blur-sm transition-opacity duration-300 lg:hidden",
           isOpen ? "opacity-100" : "pointer-events-none opacity-0",
         )}
         onClick={onClose}
         aria-hidden={!isOpen}
       />
 
-      {/* Tablet: narrow icon rail optional — full drawer until lg for touch-friendly nav */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-[min(18rem,85vw)] flex-col border-r border-border bg-card shadow-xl transition-transform duration-200 ease-out",
+          "fixed inset-y-0 left-0 z-50 flex w-[min(80vw,280px)] max-w-[280px] flex-col border-r border-border bg-card shadow-xl transition-transform duration-300 ease-out",
           "lg:static lg:z-auto lg:w-60 lg:max-w-none lg:translate-x-0 lg:shadow-none",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
         )}

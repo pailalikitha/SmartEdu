@@ -1,14 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { LogOut, Menu, Search } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { LogOut, Menu, Search, X } from "lucide-react";
 
+import { Logo } from "@/components/layout/logo";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { Button, Input } from "@/components/ui";
 import { getRoleHomePath } from "@/constants/auth";
 import { ROUTES } from "@/constants/routes";
 import { useLogout } from "@/features/auth/hooks/use-logout";
 import { useAuth } from "@/hooks/use-auth";
+import { cn } from "@/lib/utils";
 
 type HeaderProps = {
   title?: string;
@@ -18,6 +21,8 @@ type HeaderProps = {
 export function Header({ title = "Dashboard", onMenuClick }: HeaderProps) {
   const { user } = useAuth();
   const { logout, isLoggingOut } = useLogout();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const initials =
     user?.displayName?.charAt(0)?.toUpperCase() ??
@@ -33,24 +38,32 @@ export function Header({ title = "Dashboard", onMenuClick }: HeaderProps) {
           ? ROUTES.parent.profile
           : getRoleHomePath(user?.role ?? "student");
 
+  useEffect(() => {
+    if (searchOpen) {
+      searchInputRef.current?.focus();
+    }
+  }, [searchOpen]);
+
   return (
     <header className="safe-pt sticky top-0 z-30 shrink-0 border-b border-border bg-card/95 shadow-sm backdrop-blur-md">
-      <div className="flex h-14 flex-wrap items-center gap-x-2 gap-y-2 px-3 py-2 sm:h-16 sm:gap-x-3 sm:px-4 md:px-6 lg:flex-nowrap lg:py-0">
+      <div className="flex h-14 items-center gap-2 px-3 sm:h-16 sm:gap-3 sm:px-4 md:px-6">
         <Button
           variant="ghost"
           size="icon-sm"
-          className="shrink-0 lg:hidden"
+          className="shrink-0 touch-target lg:hidden"
           onClick={onMenuClick}
           aria-label="Open menu"
         >
           <Menu className="size-5" />
         </Button>
 
-        <h1 className="min-w-0 flex-1 truncate font-heading text-sm font-semibold text-foreground sm:text-base lg:max-w-[12rem] lg:flex-none xl:max-w-xs">
+        <Logo className="min-w-0 shrink lg:hidden" />
+
+        <h1 className="hidden min-w-0 flex-1 truncate font-heading text-sm font-semibold text-foreground sm:text-base lg:block lg:max-w-[12rem] xl:max-w-xs">
           {title}
         </h1>
 
-        <div className="relative order-last hidden min-w-0 flex-1 md:order-none md:flex lg:max-w-md">
+        <div className="relative hidden min-w-0 flex-1 md:flex lg:max-w-md">
           <Search
             className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
             aria-hidden
@@ -63,7 +76,22 @@ export function Header({ title = "Dashboard", onMenuClick }: HeaderProps) {
           />
         </div>
 
-        <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
+        <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-1">
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="touch-target md:hidden"
+            onClick={() => setSearchOpen((open) => !open)}
+            aria-label={searchOpen ? "Close search" : "Open search"}
+            aria-expanded={searchOpen}
+          >
+            {searchOpen ? (
+              <X className="size-5" />
+            ) : (
+              <Search className="size-5" />
+            )}
+          </Button>
+
           <NotificationBell />
 
           {user ? (
@@ -90,7 +118,7 @@ export function Header({ title = "Dashboard", onMenuClick }: HeaderProps) {
               </Link>
               <Link
                 href={profileHref}
-                className="flex size-9 items-center justify-center rounded-full border border-border lg:hidden"
+                className="touch-target flex size-10 items-center justify-center rounded-full border border-border sm:size-11 lg:hidden"
                 aria-label="Profile"
               >
                 {user.photoURL ? (
@@ -111,23 +139,34 @@ export function Header({ title = "Dashboard", onMenuClick }: HeaderProps) {
                 size="sm"
                 onClick={logout}
                 isLoading={isLoggingOut}
-                className="hidden sm:inline-flex"
+                className="hidden lg:inline-flex"
               >
                 <LogOut className="size-4" aria-hidden />
-                <span className="hidden md:inline">Sign out</span>
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                onClick={logout}
-                isLoading={isLoggingOut}
-                className="sm:hidden"
-                aria-label="Sign out"
-              >
-                <LogOut className="size-4" />
+                <span className="hidden xl:inline">Sign out</span>
               </Button>
             </>
           ) : null}
+        </div>
+      </div>
+
+      <div
+        className={cn(
+          "overflow-hidden border-t border-border bg-card px-3 transition-[max-height,opacity] duration-200 md:hidden",
+          searchOpen ? "max-h-16 opacity-100" : "max-h-0 border-t-0 opacity-0",
+        )}
+      >
+        <div className="relative py-2">
+          <Search
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden
+          />
+          <Input
+            ref={searchInputRef}
+            type="search"
+            placeholder="Search..."
+            className="h-12 w-full bg-muted/60 pl-9"
+            aria-label="Search dashboard"
+          />
         </div>
       </div>
     </header>

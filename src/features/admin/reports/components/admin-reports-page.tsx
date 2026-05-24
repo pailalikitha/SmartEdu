@@ -16,6 +16,7 @@ import {
 
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
+import { ChartSurface } from "@/components/ui/chart-surface";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useToast } from "@/components/ui/toast";
@@ -136,7 +137,8 @@ export function AdminReportsPage() {
 
       <Card>
         <CardHeader><CardTitle className="text-base">Subject averages by class</CardTitle></CardHeader>
-        <CardContent className="h-64">
+        <CardContent>
+          <ChartSurface>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={stats.classMarks}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -146,6 +148,7 @@ export function AdminReportsPage() {
               <Bar dataKey="value" fill="#1a56a8" />
             </BarChart>
           </ResponsiveContainer>
+          </ChartSurface>
         </CardContent>
       </Card>
 
@@ -175,7 +178,8 @@ export function AdminReportsPage() {
       {attendanceTrend.length > 0 ? (
         <Card>
           <CardHeader><CardTitle className="text-base">Attendance trend</CardTitle></CardHeader>
-          <CardContent className="h-64">
+          <CardContent>
+            <ChartSurface>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={attendanceTrend}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -185,6 +189,7 @@ export function AdminReportsPage() {
                 <Line type="monotone" dataKey="percent" stroke="#16a34a" />
               </LineChart>
             </ResponsiveContainer>
+            </ChartSurface>
           </CardContent>
         </Card>
       ) : null}

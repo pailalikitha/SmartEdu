@@ -19,6 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ChartSurface } from "@/components/ui/chart-surface";
 import {
   buildChartData,
   getSubjectColor,
@@ -67,8 +68,7 @@ export function MarksTrendChart({ entries }: MarksTrendChartProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-6">
-        <div
-          className="h-72 w-full min-h-[16rem] sm:h-80"
+        <ChartSurface
           role="img"
           aria-label="Line chart of marks percentage by subject over time"
         >
@@ -124,7 +124,7 @@ export function MarksTrendChart({ entries }: MarksTrendChartProps) {
               ))}
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        </ChartSurface>
 
         <div className="mt-4 flex flex-wrap gap-2" aria-label="Subject toggles">
           {allSubjects.map((subject, index) => {

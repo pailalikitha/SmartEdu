@@ -59,7 +59,7 @@ export function MarksHistorySection({ entries }: MarksHistorySectionProps) {
         <CardTitle>Marks history</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="dashboard-stats-grid">
           <div className="space-y-1">
             <Label htmlFor="mh-subject">Subject</Label>
             <select
@@ -100,7 +100,7 @@ export function MarksHistorySection({ entries }: MarksHistorySectionProps) {
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-border">
+        <div className="table-scroll rounded-lg border border-border">
           <table className="w-full min-w-[640px] text-left text-sm">
             <thead className="bg-muted/40">
               <tr>

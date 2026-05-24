@@ -49,7 +49,7 @@ export function DashboardShell({
   }, []);
 
   return (
-    <div className="flex min-h-dvh min-w-0 bg-background">
+    <div className="mobile-touch-targets flex min-h-dvh min-w-0 bg-background">
       <Sidebar
         items={navItems}
         portalLabel={portalLabel}

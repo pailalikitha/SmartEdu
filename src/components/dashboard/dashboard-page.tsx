@@ -73,8 +73,8 @@ export function DashboardPage({
         </h2>
         <div
           className={cn(
-            "grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4",
-            statsColumns === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4",
+            "dashboard-stats-grid",
+            statsColumns === 3 && "lg:[grid-template-columns:repeat(auto-fit,minmax(240px,1fr))]",
           )}
         >
           {stats.map(({ isEmpty, ...stat }) =>
