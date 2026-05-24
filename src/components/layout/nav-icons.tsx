@@ -35,6 +35,7 @@ const NAV_ICON_MAP: Record<string, LucideIcon> = {
   [ROUTES.teacher.attendance]: CalendarCheck,
   [ROUTES.teacher.uploadData]: Upload,
   [ROUTES.teacher.classes]: Users,
+  [ROUTES.teacher.students]: GraduationCap,
   [ROUTES.teacher.analytics]: BarChart3,
   [ROUTES.teacher.assistant]: Sparkles,
   [ROUTES.teacher.assignments]: ClipboardList,

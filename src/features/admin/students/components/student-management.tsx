@@ -7,17 +7,39 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button, Card, CardContent, Input, Text } from "@/components/ui";
 import { ConfirmModal } from "@/components/ui/modal";
+import { useToast } from "@/components/ui/toast";
+import { BulkStudentUpload } from "@/features/admin/students/components/bulk-student-upload";
 import {
-  StudentFormDialog,
-  toStudentInput,
-} from "@/features/admin/students/components/student-form-dialog";
+  CredentialsSuccessModal,
+  type AccountCredentials,
+} from "@/features/admin/students/components/credentials-success-modal";
+import { StudentFormDialog } from "@/features/admin/students/components/student-form-dialog";
 import { StudentTable } from "@/features/admin/students/components/student-table";
 import { useStudents } from "@/features/admin/students/hooks/use-students";
-import type { StudentFormValues } from "@/features/admin/students/schemas/student.schema";
-import type { Student } from "@/types/student";
+import type {
+  StudentEditFormValues,
+  StudentFormValues,
+} from "@/features/admin/students/schemas/student.schema";
+import type { Student, StudentInput } from "@/types/student";
 import { getStudentFullName } from "@/types/student";
+import { createStudentWithParentAccount } from "@/services/create-student-parent.service";
+
+function editValuesToInput(values: StudentEditFormValues): StudentInput {
+  return {
+    firstName: values.firstName.trim(),
+    lastName: values.lastName.trim(),
+    email: values.email.trim().toLowerCase(),
+    rollNumber: values.rollNumber.trim(),
+    grade: values.grade,
+    section: values.section,
+    guardianName: values.guardianName?.trim() || undefined,
+    guardianContact: values.guardianContact?.trim() || undefined,
+    status: values.status,
+  };
+}
 
 export function StudentManagement() {
+  const { toast } = useToast();
   const {
     students,
     totalCount,
@@ -27,7 +49,6 @@ export function StudentManagement() {
     isSubmitting,
     error,
     refresh,
-    addStudent,
     editStudent,
     removeStudent,
   } = useStudents();
@@ -36,6 +57,9 @@ export function StudentManagement() {
   const [formMode, setFormMode] = useState<"add" | "edit">("add");
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Student | null>(null);
+  const [credentials, setCredentials] = useState<AccountCredentials | null>(null);
+  const [credentialsOpen, setCredentialsOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   const openAdd = () => {
     setFormMode("add");
@@ -49,13 +73,53 @@ export function StudentManagement() {
     setFormOpen(true);
   };
 
-  const handleFormSubmit = async (values: StudentFormValues) => {
-    const input = toStudentInput(values);
-    if (formMode === "add") {
-      await addStudent(input);
-    } else if (selectedStudent) {
-      await editStudent(selectedStudent.id, input);
+  const handleAddSubmit = async (values: StudentFormValues) => {
+    setIsCreating(true);
+    try {
+    const result = await createStudentWithParentAccount({
+      studentName: values.studentName.trim(),
+      studentEmail: values.studentEmail.trim().toLowerCase(),
+      rollNumber: values.rollNumber.trim(),
+      classId: values.classId,
+      parentName: values.parentName?.trim() || undefined,
+      parentEmail: values.parentEmail?.trim().toLowerCase() || undefined,
+    });
+
+    await refresh();
+
+    setCredentials({
+      studentName: values.studentName,
+      studentEmail: result.studentEmail ?? values.studentEmail,
+      studentPassword: result.studentPassword ?? "",
+      parentName: values.parentName,
+      parentEmail: result.parentEmail,
+      parentPassword: result.parentPassword,
+      parentReused: result.parentReused,
+      emailWarnings: result.emailWarnings,
+    });
+    setCredentialsOpen(true);
+    setFormOpen(false);
+
+    toast({
+      title: "Student and parent accounts created.",
+      variant: "success",
+    });
+    } catch (err) {
+      toast({
+        title: err instanceof Error ? err.message : "Failed to create accounts",
+        variant: "error",
+      });
+      throw err;
+    } finally {
+      setIsCreating(false);
     }
+  };
+
+  const handleEditSubmit = async (values: StudentEditFormValues) => {
+    if (!selectedStudent) return;
+    await editStudent(selectedStudent.id, editValuesToInput(values));
+    setFormOpen(false);
+    toast({ title: "Student updated.", variant: "success" });
   };
 
   const handleDelete = async () => {
@@ -84,7 +148,7 @@ export function StudentManagement() {
     <div className="space-y-6">
       <PageHeader
         title="Student management"
-        description="Add, edit, and manage student records. Data is stored in Firestore."
+        description="Create student and parent accounts with linked Firestore records."
         action={
           <Button onClick={openAdd} className="w-full sm:w-auto">
             <Plus className="size-4" aria-hidden />
@@ -92,6 +156,8 @@ export function StudentManagement() {
           </Button>
         }
       />
+
+      <BulkStudentUpload onComplete={() => void refresh()} />
 
       <Card>
         <CardContent className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center">
@@ -175,8 +241,15 @@ export function StudentManagement() {
         onOpenChange={setFormOpen}
         mode={formMode}
         student={selectedStudent}
-        isSubmitting={isSubmitting}
-        onSubmit={handleFormSubmit}
+        isSubmitting={isCreating || isSubmitting}
+        onSubmit={handleAddSubmit}
+        onEditSubmit={handleEditSubmit}
+      />
+
+      <CredentialsSuccessModal
+        open={credentialsOpen}
+        onOpenChange={setCredentialsOpen}
+        credentials={credentials}
       />
 
       <ConfirmModal

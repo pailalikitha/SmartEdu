@@ -1,4 +1,5 @@
 import { AuthGuard } from "@/components/auth/auth-guard";
+import { PortalPasswordGuard } from "@/components/auth/portal-password-guard";
 import { DashboardShell } from "@/components/layout";
 import { ToastProvider } from "@/components/ui/toast";
 import { USER_ROLES } from "@/constants/roles";
@@ -13,14 +14,16 @@ export default function StudentPortalLayout({
   return (
     <AuthGuard allowedRoles={[USER_ROLES.student]}>
       <ToastProvider>
-        <DashboardShell
-          navItems={STUDENT_NAV}
-          portalLabel="Student Portal"
-          portalRoot={ROUTES.student.root}
-          portalRole={USER_ROLES.student}
-        >
-          {children}
-        </DashboardShell>
+        <PortalPasswordGuard>
+          <DashboardShell
+            navItems={STUDENT_NAV}
+            portalLabel="Student Portal"
+            portalRoot={ROUTES.student.root}
+            portalRole={USER_ROLES.student}
+          >
+            {children}
+          </DashboardShell>
+        </PortalPasswordGuard>
       </ToastProvider>
     </AuthGuard>
   );

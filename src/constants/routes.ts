@@ -6,7 +6,7 @@ export const ROUTES = {
   notifications: "/notifications",
   student: {
     root: "/student",
-    dashboard: "/student",
+    dashboard: "/student/dashboard",
     onboarding: "/student/onboarding",
     profile: "/student/profile",
     marks: "/student/marks",
@@ -27,12 +27,17 @@ export const ROUTES = {
     analytics: "/teacher/analytics",
     assistant: "/teacher/assistant",
     uploadData: "/teacher/upload-data",
+    students: "/teacher/students",
+    studentDetail: (studentId: string) =>
+      `/teacher/students/${studentId}` as const,
   },
   admin: {
     root: "/admin",
     dashboard: "/admin",
     teachers: "/admin/teachers",
     students: "/admin/students",
+    studentDetail: (studentId: string) =>
+      `/admin/students/${studentId}` as const,
     classes: "/admin/classes",
     reports: "/admin/reports",
     settings: "/admin/settings",
@@ -40,7 +45,8 @@ export const ROUTES = {
   },
   parent: {
     root: "/parent",
-    dashboard: "/parent",
+    dashboard: "/parent/dashboard",
+    selectChild: "/parent/select-child",
     marks: "/parent/marks",
     attendance: "/parent/attendance",
     weakTopics: "/parent/weak-topics",

@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
-  createStudent,
   deleteStudent,
   listStudents,
   updateStudent,
@@ -63,13 +62,11 @@ export function useStudents() {
     [students, searchQuery],
   );
 
-  const addStudent = useCallback(async (input: StudentInput) => {
+  const addStudent = useCallback(async (_input: StudentInput) => {
     setIsSubmitting(true);
     setError(null);
     try {
-      const created = await createStudent(input);
-      setStudents((prev) => [created, ...prev]);
-      return created;
+      throw new Error("Use the Add student form to create linked accounts.");
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Failed to add student.";

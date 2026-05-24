@@ -12,10 +12,14 @@ import { getFirebaseDb } from "@/lib/firebase/client";
 export type UserProfile = {
   email: string;
   displayName: string;
+  name?: string;
   role: UserRole;
   schoolId?: string;
   photoURL?: string | null;
   status?: "active" | "inactive";
+  linkedStudentId?: string;
+  linkedStudentIds?: string[];
+  passwordChanged?: boolean;
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
 };
@@ -51,11 +55,17 @@ export async function ensureUserProfile(
 
 export async function updateUserProfile(
   uid: string,
-  patch: Partial<Pick<UserProfile, "displayName" | "photoURL">>,
+  patch: Partial<
+    Pick<UserProfile, "displayName" | "photoURL" | "name" | "passwordChanged">
+  >,
 ): Promise<void> {
   const { updateDoc } = await import("firebase/firestore");
   await updateDoc(doc(getFirebaseDb(), USERS_COLLECTION, uid), {
     ...patch,
     updatedAt: serverTimestamp(),
   });
+}
+
+export async function markPasswordChanged(uid: string): Promise<void> {
+  await updateUserProfile(uid, { passwordChanged: true });
 }

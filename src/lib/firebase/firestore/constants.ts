@@ -15,6 +15,7 @@ export const COLLECTIONS = {
   assignments: "assignments",
   settings: "settings",
   schoolActivity: "schoolActivity",
+  notes: "notes",
 } as const;
 
 export const ASSIGNMENT_SUBCOLLECTIONS = {

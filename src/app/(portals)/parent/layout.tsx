@@ -1,17 +1,22 @@
 "use client";
 
 import { AuthGuard } from "@/components/auth/auth-guard";
+import { PortalPasswordGuard } from "@/components/auth/portal-password-guard";
+import { ParentPortalGuard } from "@/components/parent/parent-portal-guard";
 import { DashboardShell } from "@/components/layout";
 import { ToastProvider } from "@/components/ui/toast";
 import { USER_ROLES } from "@/constants/roles";
 import { PARENT_NAV } from "@/constants/navigation";
 import { ROUTES } from "@/constants/routes";
+import { ParentProvider } from "@/contexts/parent-context";
 import { useParentChildrenSnapshot } from "@/hooks/use-parent-children-snapshot";
+import { useUserProfileSnapshot } from "@/hooks/use-user-profile-snapshot";
 import { useAuth } from "@/hooks/use-auth";
 
 function ParentPortalInner({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  useParentChildrenSnapshot(user?.email);
+  const { profile } = useUserProfileSnapshot(user?.id);
+  useParentChildrenSnapshot(user?.id, profile);
 
   return (
     <DashboardShell
@@ -33,7 +38,13 @@ export default function ParentPortalLayout({
   return (
     <AuthGuard allowedRoles={[USER_ROLES.parent]}>
       <ToastProvider>
-        <ParentPortalInner>{children}</ParentPortalInner>
+        <PortalPasswordGuard>
+          <ParentProvider>
+            <ParentPortalGuard>
+              <ParentPortalInner>{children}</ParentPortalInner>
+            </ParentPortalGuard>
+          </ParentProvider>
+        </PortalPasswordGuard>
       </ToastProvider>
     </AuthGuard>
   );

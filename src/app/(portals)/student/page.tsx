@@ -1,11 +1,7 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import { StudentDashboard } from "@/components/dashboard";
-import { useAuth } from "@/hooks/use-auth";
+import { ROUTES } from "@/constants/routes";
 
-export default function StudentDashboardPage() {
-  const { user } = useAuth();
-  const displayName = user?.displayName ?? user?.email ?? "Student";
-
-  return <StudentDashboard displayName={displayName} />;
+export default function StudentRootPage() {
+  redirect(ROUTES.student.dashboard);
 }

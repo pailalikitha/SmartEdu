@@ -24,6 +24,7 @@ export const TEACHER_NAV: NavItem[] = [
   { label: "Attendance", href: ROUTES.teacher.attendance },
   { label: "Upload Data", href: ROUTES.teacher.uploadData },
   { label: "Classes", href: ROUTES.teacher.classes },
+  { label: "Students", href: ROUTES.teacher.students },
   { label: "Analytics", href: ROUTES.teacher.analytics },
   { label: "AI Assistant", href: ROUTES.teacher.assistant },
 ];

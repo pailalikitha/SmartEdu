@@ -36,6 +36,8 @@ export function UploadStudentsSection({
       const result = await parseCsvFile<StudentCsvRow>(file, (row) => {
         const parsed = studentCsvRowSchema.safeParse({
           ...row,
+          studentEmail: row.studentEmail?.trim() ?? "",
+          parentName: row.parentName?.trim() ?? "",
           parentEmail: row.parentEmail?.trim() ?? "",
           phone: row.phone?.trim() ?? "",
         });

@@ -1,5 +1,7 @@
-import { ParentDashboardPage } from "@/features/parent/components/parent-dashboard-page";
+import { redirect } from "next/navigation";
 
-export default function ParentDashboardRoute() {
-  return <ParentDashboardPage />;
+import { ROUTES } from "@/constants/routes";
+
+export default function ParentRootPage() {
+  redirect(ROUTES.parent.dashboard);
 }

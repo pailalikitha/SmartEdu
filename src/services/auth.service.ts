@@ -58,10 +58,13 @@ export async function mapFirebaseUserWithProfile(
   return {
     id: firebaseUser.uid,
     email: firebaseUser.email ?? profile.email ?? "",
-    displayName,
+    displayName: displayName ?? profile.name ?? null,
     role: profile.role,
     schoolId: profile.schoolId,
     photoURL: firebaseUser.photoURL ?? profile.photoURL ?? null,
+    passwordChanged: profile.passwordChanged ?? true,
+    linkedStudentId: profile.linkedStudentId,
+    linkedStudentIds: profile.linkedStudentIds,
   };
 }
 

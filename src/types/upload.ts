@@ -9,12 +9,14 @@ export type MarksCsvRow = {
 };
 
 export type StudentCsvRow = {
-  studentId: string;
+  studentId?: string;
   studentName: string;
+  studentEmail?: string;
   rollNumber: string;
   classId: string;
+  parentName?: string;
   parentEmail: string;
-  phone: string;
+  phone?: string;
 };
 
 export type UploadResultSummary = {

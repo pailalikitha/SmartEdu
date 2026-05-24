@@ -1,9 +1,12 @@
 "use client";
 
-import { Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ExternalLink, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import { Badge, Button } from "@/components/ui";
+import { ROUTES } from "@/constants/routes";
 import type { Student } from "@/types/student";
 import {
   getStudentClassLabel,
@@ -35,6 +38,13 @@ function StudentActions({
 }) {
   return (
     <div className="flex items-center justify-end gap-1">
+      <Link
+        href={ROUTES.admin.studentDetail(student.id)}
+        className="inline-flex size-8 items-center justify-center rounded-md hover:bg-muted"
+        aria-label={`View ${getStudentFullName(student)} dashboard`}
+      >
+        <ExternalLink className="size-4" />
+      </Link>
       <Button
         variant="ghost"
         size="icon-sm"
@@ -71,9 +81,12 @@ function StudentCard({
     <article className="rounded-xl border border-border bg-card p-4 shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-medium text-foreground">
+          <Link
+            href={ROUTES.admin.studentDetail(student.id)}
+            className="font-medium text-foreground hover:text-primary hover:underline"
+          >
             {getStudentFullName(student)}
-          </p>
+          </Link>
           <p className="mt-0.5 truncate text-sm text-muted-foreground">
             {student.email}
           </p>
@@ -122,6 +135,8 @@ export function StudentTable({
   onEdit,
   onDelete,
 }: StudentTableProps) {
+  const router = useRouter();
+
   return (
     <>
       {/* Mobile: cards */}
@@ -166,13 +181,18 @@ export function StudentTable({
               {students.map((student) => (
                 <tr
                   key={student.id}
-                  className="transition-colors hover:bg-muted/30"
+                  className="cursor-pointer transition-colors hover:bg-muted/30"
+                  onClick={() => router.push(ROUTES.admin.studentDetail(student.id))}
                 >
                   <td className="px-4 py-3">
                     <div>
-                      <p className="font-medium text-foreground">
+                      <Link
+                        href={ROUTES.admin.studentDetail(student.id)}
+                        className="font-medium text-foreground hover:text-primary hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         {getStudentFullName(student)}
-                      </p>
+                      </Link>
                       <p className="text-muted-foreground">{student.email}</p>
                     </div>
                   </td>

@@ -19,20 +19,24 @@ export const useParentStore = create<ParentState>()(
       setChildren: (children) =>
         set((state) => {
           const firstId = children[0]
-            ? (children[0].authUserId ?? children[0].id)
+            ? (children[0].uid ?? children[0].authUserId ?? children[0].id)
             : null;
           const keepExisting =
             state.selectedStudentId &&
             children.some(
               (c) =>
                 c.id === state.selectedStudentId ||
-                c.authUserId === state.selectedStudentId,
+                c.authUserId === state.selectedStudentId ||
+                c.uid === state.selectedStudentId,
             );
+          const multiple = children.length > 1;
           return {
             children,
             selectedStudentId: keepExisting
               ? state.selectedStudentId
-              : firstId,
+              : multiple
+                ? null
+                : firstId,
           };
         }),
       setSelectedStudentId: (id) => set({ selectedStudentId: id }),
@@ -42,7 +46,9 @@ export const useParentStore = create<ParentState>()(
   ),
 );
 
-export function getSelectedChild(state: ParentState): Student | null {
+type ParentSelectionState = Pick<ParentState, "children" | "selectedStudentId">;
+
+export function getSelectedChild(state: ParentSelectionState): Student | null {
   if (!state.selectedStudentId) return state.children[0] ?? null;
   return (
     state.children.find(
@@ -51,7 +57,9 @@ export function getSelectedChild(state: ParentState): Student | null {
   );
 }
 
-export function getSelectedStudentAuthId(state: ParentState): string | null {
+export function getSelectedStudentAuthId(
+  state: ParentSelectionState,
+): string | null {
   const child = getSelectedChild(state);
-  return child ? (child.authUserId ?? child.id) : null;
+  return child ? (child.uid ?? child.authUserId ?? child.id) : null;
 }

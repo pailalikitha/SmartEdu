@@ -1,3 +1,6 @@
+// Copy to firestore.rules (or deploy firestore.rules directly) before:
+// firebase deploy --only firestore:rules,firestore:indexes
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -13,6 +16,10 @@ service cloud.firestore {
       return isSignedIn() && userDoc().data.role == 'principal';
     }
 
+    function isAdmin() {
+      return isSignedIn() && userDoc().data.role == 'admin';
+    }
+
     function isTeacher() {
       return isSignedIn() && userDoc().data.role == 'teacher';
     }
@@ -21,8 +28,32 @@ service cloud.firestore {
       return isSignedIn() && userDoc().data.role == 'student';
     }
 
+    function isParent() {
+      return isSignedIn() && userDoc().data.role == 'parent';
+    }
+
     function isStaff() {
-      return isPrincipal() || isTeacher();
+      return isPrincipal() || isTeacher() || isAdmin();
+    }
+
+    function parentLinkedTo(studentId) {
+      let u = userDoc().data;
+      return isParent() && (
+        u.linkedStudentId == studentId
+        || (u.linkedStudentIds != null && studentId in u.linkedStudentIds)
+      );
+    }
+
+    function isOwner(studentId) {
+      return isSignedIn() && request.auth.uid == studentId;
+    }
+
+    function studentParentUid(studentId) {
+      return get(/databases/$(database)/documents/students/$(studentId)).data.parentUid;
+    }
+
+    function parentOwnsStudent(studentId) {
+      return isParent() && studentParentUid(studentId) == request.auth.uid;
     }
 
     match /users/{userId} {
@@ -31,56 +62,91 @@ service cloud.firestore {
       allow update: if isSignedIn() && request.auth.uid == userId;
     }
 
+    match /parents/{parentId} {
+      allow read, write: if isSignedIn() && request.auth.uid == parentId;
+      allow read: if isStaff();
+    }
+
     match /classes/{classId} {
-      allow read: if isPrincipal()
+      allow read: if isPrincipal() || isAdmin()
         || (isTeacher() && resource.data.teacherId == request.auth.uid);
-      allow create, update, delete: if isPrincipal();
+      allow create, update, delete: if isPrincipal() || isAdmin();
     }
 
     match /students/{studentId} {
-      allow read: if isStaff();
+      allow read: if isStaff()
+        || isOwner(studentId)
+        || parentLinkedTo(studentId)
+        || parentOwnsStudent(studentId);
       allow create, update: if isStaff();
-      allow delete: if isPrincipal();
+      allow delete: if isPrincipal() || isAdmin();
     }
 
     match /attendance/{recordId} {
       allow read: if isStaff()
-        || (isStudent() && resource.data.studentId == request.auth.uid);
+        || (isStudent() && resource.data.studentId == request.auth.uid)
+        || (isParent() && parentOwnsStudent(resource.data.studentId));
       allow create, update: if isStaff();
-      allow delete: if isPrincipal();
+      allow delete: if isPrincipal() || isAdmin();
     }
 
     match /attendance/{date}/classes/{classId}/students/{studentId} {
-      allow read: if isStaff();
-      allow create, update: if isPrincipal()
+      allow read: if isStaff() || parentOwnsStudent(studentId) || isOwner(studentId);
+      allow create, update: if isPrincipal() || isAdmin()
         || (isTeacher() && request.resource.data.teacherId == request.auth.uid);
-      allow delete: if isPrincipal();
+      allow delete: if isPrincipal() || isAdmin();
     }
 
     match /uploadHistory/{teacherId}/logs/{logId} {
       allow read, create: if isSignedIn() && request.auth.uid == teacherId;
-      allow update, delete: if isPrincipal();
+      allow update, delete: if isPrincipal() || isAdmin();
     }
 
     match /marks/{studentId}/entries/{entryId} {
       allow read: if isStaff()
-        || (isSignedIn() && request.auth.uid == studentId);
+        || isOwner(studentId)
+        || parentLinkedTo(studentId)
+        || parentOwnsStudent(studentId);
       allow write: if isStaff();
     }
 
     match /weakTopics/{studentId}/topics/{topicId} {
-      allow read: if isSignedIn() && request.auth.uid == studentId;
+      allow read: if isOwner(studentId)
+        || parentLinkedTo(studentId)
+        || parentOwnsStudent(studentId)
+        || isStaff();
       allow write: if isStaff();
     }
 
     match /activityLog/{studentId}/logs/{logId} {
-      allow read: if isSignedIn() && request.auth.uid == studentId;
+      allow read: if isOwner(studentId)
+        || parentLinkedTo(studentId)
+        || parentOwnsStudent(studentId)
+        || isStaff();
       allow write: if isStaff();
     }
 
     match /studyTasks/{taskId} {
       allow read, update, delete: if isSignedIn() && resource.data.studentId == request.auth.uid;
       allow create: if isSignedIn() && request.resource.data.studentId == request.auth.uid;
+    }
+
+    match /assignments/{assignmentId} {
+      allow read: if isStaff()
+        || isSignedIn();
+      allow write: if isStaff();
+    }
+
+    match /notes/{ownerId}/students/{studentId}/items/{noteId} {
+      allow read, create, update, delete: if isSignedIn() && request.auth.uid == ownerId;
+      allow read: if isStaff();
+    }
+
+    match /assignments/{assignmentId}/submissions/{submissionId} {
+      allow read: if isStaff()
+        || isOwner(resource.data.studentId)
+        || parentOwnsStudent(resource.data.studentId);
+      allow create, update: if isOwner(request.resource.data.studentId);
     }
   }
 }

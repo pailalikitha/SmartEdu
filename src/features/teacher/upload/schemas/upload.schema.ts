@@ -15,10 +15,19 @@ export const marksCsvRowSchema = z.object({
 });
 
 export const studentCsvRowSchema = z.object({
-  studentId: z.string().min(1, "studentId is required"),
+  studentId: z.string().optional(),
   studentName: z.string().min(1, "studentName is required"),
+  studentEmail: z
+    .string()
+    .trim()
+    .refine(
+      (val) => val === "" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+      "studentEmail must be valid",
+    )
+    .optional(),
   rollNumber: z.string().min(1, "rollNumber is required"),
   classId: z.string().min(1, "classId is required"),
+  parentName: z.string().optional(),
   parentEmail: z
     .string()
     .trim()
@@ -26,7 +35,7 @@ export const studentCsvRowSchema = z.object({
       (val) => val === "" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
       "parentEmail must be valid",
     ),
-  phone: z.string(),
+  phone: z.string().optional(),
 });
 
 export type MarksCsvRowInput = z.infer<typeof marksCsvRowSchema>;

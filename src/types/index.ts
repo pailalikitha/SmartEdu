@@ -7,6 +7,9 @@ export type User = {
   role: UserRole;
   schoolId?: string;
   photoURL?: string | null;
+  passwordChanged?: boolean;
+  linkedStudentId?: string;
+  linkedStudentIds?: string[];
 };
 
 export type ApiResponse<T> = {

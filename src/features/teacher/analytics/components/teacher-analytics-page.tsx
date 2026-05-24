@@ -326,7 +326,12 @@ export function TeacherAnalyticsPage() {
               {analytics.atRisk.map((row) => (
                 <tr key={row.student.id} className="border-t border-border">
                   <td className="px-4 py-3 font-medium">
-                    {getStudentFullName(row.student)}
+                    <Link
+                      href={ROUTES.teacher.studentDetail(row.student.id)}
+                      className="text-primary hover:underline"
+                    >
+                      {getStudentFullName(row.student)}
+                    </Link>
                   </td>
                   <td className="px-4 py-3">{row.className}</td>
                   <td className="px-4 py-3">
@@ -341,20 +346,28 @@ export function TeacherAnalyticsPage() {
                   </td>
                   <td className="px-4 py-3">{row.riskReason}</td>
                   <td className="px-4 py-3">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      isLoading={notifyingId === row.student.id}
-                      onClick={() =>
-                        void notifyStudent(
-                          row.student.id,
-                          getStudentFullName(row.student),
-                          row.student.authUserId,
-                        )
-                      }
-                    >
-                      Notify Student
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                      <Link
+                        href={ROUTES.teacher.studentDetail(row.student.id)}
+                        className="inline-flex h-8 items-center rounded-lg border border-border px-3 text-xs font-medium hover:bg-muted"
+                      >
+                        View
+                      </Link>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        isLoading={notifyingId === row.student.id}
+                        onClick={() =>
+                          void notifyStudent(
+                            row.student.id,
+                            getStudentFullName(row.student),
+                            row.student.authUserId,
+                          )
+                        }
+                      >
+                        Notify
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -84,27 +84,27 @@ export const MARKS_TEMPLATE_ROWS = [
 
 export const STUDENT_TEMPLATE_ROWS = [
   [
-    "studentId",
     "studentName",
+    "studentEmail",
     "rollNumber",
     "classId",
+    "parentName",
     "parentEmail",
-    "phone",
   ],
   [
-    "stu_001",
     "Aarav Sharma",
+    "aarav@school.edu",
     "101",
     "class_10a",
+    "Raj Sharma",
     "parent1@email.com",
-    "9876543210",
   ],
   [
-    "stu_002",
     "Priya Patel",
+    "priya@school.edu",
     "102",
     "class_10a",
+    "Anita Patel",
     "parent2@email.com",
-    "9876543211",
   ],
 ] as const;

@@ -17,6 +17,9 @@ export type Student = {
   guardianName?: string;
   guardianContact?: string;
   parentEmail?: string;
+  parentUid?: string;
+  uid?: string;
+  atRisk?: boolean;
   status: StudentStatus;
   createdAt?: Date;
   updatedAt?: Date;
