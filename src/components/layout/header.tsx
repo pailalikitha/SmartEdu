@@ -153,10 +153,10 @@ export function Header({ title = "Dashboard", onMenuClick }: HeaderProps) {
       >
         <div className="py-2">
           {searchOpen && (user?.role === "teacher" || user?.role === "admin") ? (
-            <GlobalSearch 
-              role={user.role} 
-              onCloseMobile={() => setSearchOpen(false)} 
-              autoFocus 
+            <GlobalSearch
+              role={user.role}
+              onCloseMobile={() => setSearchOpen(false)}
+              autoFocus
             />
           ) : null}
         </div>

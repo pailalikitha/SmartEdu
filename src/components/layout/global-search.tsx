@@ -138,7 +138,7 @@ export function GlobalSearch({ role, onCloseMobile, autoFocus }: GlobalSearchPro
     if (isAdmin) {
       const lowerSearch = searchStr.toLowerCase();
       const endLowerStr = lowerSearch + "\uf8ff";
-      
+
       // Since teacher names might not be perfectly capitalized, and we want to do prefix search:
       const teacherQ = query(
         collection(db, COLLECTIONS.teachers),
