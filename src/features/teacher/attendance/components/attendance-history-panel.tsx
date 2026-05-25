@@ -16,6 +16,8 @@ import type { Student } from "@/types/student";
 import { listStudentsByClassIds } from "@/services/student.service";
 import { getStudentFullName } from "@/types/student";
 import { toDateString } from "@/lib/utils/date";
+import { exportAttendanceToExcel } from "@/lib/utils/export";
+import { Download } from "lucide-react";
 
 const PAGE_SIZE = 15;
 
@@ -108,6 +110,21 @@ export function AttendanceHistoryPanel({ teacherId }: { teacherId: string }) {
     }
   };
 
+  const handleExportExcel = async () => {
+    const selectedClass = classes.find(c => c.id === classId);
+    const name = selectedClass ? selectedClass.name : "Class";
+    const filename = `Attendance_${name}_${startDate}_to_${endDate}.xlsx`;
+    
+    try {
+      await exportAttendanceToExcel(students, dates, grid, name, filename);
+    } catch (err) {
+      toast({
+        variant: "error",
+        title: "Export failed.",
+      });
+    }
+  };
+
   const totalPages = Math.max(1, Math.ceil(students.length / PAGE_SIZE));
   const pageStudents = students.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
@@ -152,15 +169,26 @@ export function AttendanceHistoryPanel({ teacherId }: { teacherId: string }) {
               className="flex h-10 w-full rounded-lg border border-input bg-card px-3 text-sm"
             />
           </div>
-          <div className="flex items-end">
+          <div className="flex flex-col gap-2 justify-end sm:flex-row">
             <Button
               type="button"
-              className="h-10 w-full"
+              className="h-10 w-full sm:w-auto"
               isLoading={isLoading}
               onClick={() => void handleLoadHistory()}
             >
               Load history
             </Button>
+            {students.length > 0 && dates.length > 0 && (
+              <Button
+                type="button"
+                variant="outline"
+                className="h-10 w-full sm:w-auto"
+                onClick={() => void handleExportExcel()}
+              >
+                <Download className="size-4" aria-hidden />
+                Export
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

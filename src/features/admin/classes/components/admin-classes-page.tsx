@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Plus, Download } from "lucide-react";
 import { collection, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
@@ -24,6 +24,7 @@ import { createClass, mapClassDoc } from "@/services/classes.service";
 import { listStudentsByClassIds } from "@/services/student.service";
 import type { ClassRoom } from "@/types/class";
 import { getStudentFullName } from "@/types/student";
+import { exportToCSV } from "@/lib/utils/export";
 
 export function AdminClassesPage() {
   const { toast } = useToast();
@@ -123,6 +124,18 @@ export function AdminClassesPage() {
     setClassStudents(students);
   };
 
+  const handleExport = async () => {
+    const data = classes.map((c) => ({
+      Name: c.name,
+      Section: c.section || "—",
+      Subject: c.subject || "—",
+      Teacher: teacherName(c.teacherId),
+      Students: studentCounts[c.id] || 0,
+      AcademicYear: c.academicYear,
+    }));
+    await exportToCSV(data, "classes-export.xlsx");
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-16">
@@ -137,10 +150,16 @@ export function AdminClassesPage() {
         title="Classes"
         description="Create classes and assign teachers."
         action={
-          <Button onClick={() => setCreateOpen(true)}>
-            <Plus className="size-4" />
-            Create class
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => void handleExport()}>
+              <Download className="size-4 mr-2" />
+              Export
+            </Button>
+            <Button onClick={() => setCreateOpen(true)}>
+              <Plus className="size-4 mr-2" />
+              Create class
+            </Button>
+          </div>
         }
       />
 

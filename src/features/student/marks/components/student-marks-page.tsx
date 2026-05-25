@@ -10,13 +10,25 @@ import { MarksTrendChart } from "@/features/student/marks/components/marks-trend
 import { useStudentMarks } from "@/features/student/marks/hooks/use-student-marks";
 import { computeMarksSummary } from "@/features/student/marks/utils/marks-stats";
 import { useAuth } from "@/hooks/use-auth";
+import { useStudentAnalytics } from "@/hooks/use-student-analytics";
+import { generateStudentReportCardPDF } from "@/lib/utils/export";
+import { toDateString } from "@/lib/utils/date";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 
 export function StudentMarksPage() {
   const { user } = useAuth();
   const studentId = user?.id;
-  const { entries, isLoading, error } = useStudentMarks(studentId);
+  const analytics = useStudentAnalytics(studentId);
+  const { marksEntries: entries, loading: isLoading, error } = analytics;
 
   const summary = useMemo(() => computeMarksSummary(entries), [entries]);
+
+  const handleDownload = () => {
+    if (!user) return;
+    const filename = `ReportCard_${user.displayName || "Student"}_${toDateString(new Date())}.pdf`;
+    generateStudentReportCardPDF(user.displayName || "Student", "", analytics, filename);
+  };
 
   if (isLoading) {
     return (
@@ -70,6 +82,12 @@ export function StudentMarksPage() {
       <PageHeader
         title="Marks Analysis"
         description="Subject performance, exam history, and trends."
+        action={
+          <Button onClick={handleDownload} variant="outline">
+            <Download className="size-4 mr-2" />
+            Download Report Card
+          </Button>
+        }
       />
 
       {summary ? (

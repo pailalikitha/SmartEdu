@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Download } from "lucide-react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 
@@ -22,6 +22,7 @@ import { COLLECTIONS } from "@/lib/firebase/firestore/constants";
 import { requireFirestore } from "@/lib/firebase/firestore/query";
 import { logSchoolActivity } from "@/services/school-activity.service";
 import { doc, updateDoc } from "firebase/firestore";
+import { exportToCSV } from "@/lib/utils/export";
 
 type TeacherRow = {
   id: string;
@@ -147,6 +148,17 @@ export function AdminTeachersPage() {
     }
   };
 
+  const handleExport = async () => {
+    const data = rows.map((t) => ({
+      Name: t.name,
+      Email: t.email,
+      Subjects: t.subjects.join(", "),
+      Classes: t.classCount,
+      Status: t.status,
+    }));
+    await exportToCSV(data, "teachers-export.xlsx");
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-16">
@@ -179,6 +191,10 @@ export function AdminTeachersPage() {
               className="pl-9"
             />
           </div>
+          <Button variant="outline" size="sm" onClick={() => void handleExport()} className="shrink-0">
+            <Download className="size-4 mr-2" />
+            Export
+          </Button>
         </CardContent>
       </Card>
 

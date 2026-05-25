@@ -39,6 +39,8 @@ import { formatPercentage } from "@/lib/utils/format";
 import { getStudentFullName } from "@/types/student";
 import { sendTeacherAlertNotification } from "@/services/notifications.service";
 import { getSubjectColor } from "@/features/student/marks/utils/marks-stats";
+import { exportElementToPDF } from "@/lib/utils/export";
+import { toDateString } from "@/lib/utils/date";
 
 function barColor(value: number): string {
   if (value > 75) return "#16a34a";
@@ -140,6 +142,19 @@ export function TeacherAnalyticsPage() {
     }
   };
 
+  const handleExportPDF = async () => {
+    try {
+      const className = classes.length === 1 ? classes[0].name : "All_Classes";
+      const filename = `ClassReport_${className}_${toDateString(new Date())}.pdf`;
+      await exportElementToPDF("analytics-report-content", filename);
+    } catch (err) {
+      toast({
+        title: "Export failed",
+        variant: "error",
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -177,9 +192,16 @@ export function TeacherAnalyticsPage() {
       <PageHeader
         title="Class Analytics"
         description="Performance trends and at-risk students."
+        action={
+          <Button onClick={() => void handleExportPDF()} variant="outline">
+            <BarChart3 className="size-4" />
+            Export Report (PDF)
+          </Button>
+        }
       />
 
-      <div className="dashboard-stats-grid">
+      <div id="analytics-report-content" className="space-y-6 md:space-y-8 p-1">
+        <div className="dashboard-stats-grid">
         <Card className="border-l-[3px] border-l-primary">
           <CardContent className="pt-1">
             <p className="text-sm text-muted-foreground">Total Students</p>
@@ -416,6 +438,7 @@ export function TeacherAnalyticsPage() {
           </div>
         ) : null}
       </section>
+      </div>
 
       <Link
         href={ROUTES.teacher.uploadData}

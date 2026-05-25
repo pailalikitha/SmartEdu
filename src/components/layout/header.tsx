@@ -6,7 +6,8 @@ import { LogOut, Menu, Search, X } from "lucide-react";
 
 import { Logo } from "@/components/layout/logo";
 import { NotificationBell } from "@/components/notifications/notification-bell";
-import { Button, Input } from "@/components/ui";
+import { GlobalSearch } from "@/components/layout/global-search";
+import { Button } from "@/components/ui/button";
 import { getRoleHomePath } from "@/constants/auth";
 import { ROUTES } from "@/constants/routes";
 import { useLogout } from "@/features/auth/hooks/use-logout";
@@ -63,34 +64,29 @@ export function Header({ title = "Dashboard", onMenuClick }: HeaderProps) {
           {title}
         </h1>
 
-        <div className="relative hidden min-w-0 flex-1 md:flex lg:max-w-md">
-          <Search
-            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-            aria-hidden
-          />
-          <Input
-            type="search"
-            placeholder="Search..."
-            className="h-9 w-full bg-muted/60 pl-9"
-            aria-label="Search dashboard"
-          />
+        <div className="hidden min-w-0 flex-1 md:flex lg:max-w-md">
+          {user?.role === "teacher" || user?.role === "admin" ? (
+            <GlobalSearch role={user.role} />
+          ) : null}
         </div>
 
         <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-1">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="touch-target md:hidden"
-            onClick={() => setSearchOpen((open) => !open)}
-            aria-label={searchOpen ? "Close search" : "Open search"}
-            aria-expanded={searchOpen}
-          >
-            {searchOpen ? (
-              <X className="size-5" />
-            ) : (
-              <Search className="size-5" />
-            )}
-          </Button>
+          {user?.role === "teacher" || user?.role === "admin" ? (
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="touch-target md:hidden"
+              onClick={() => setSearchOpen((open) => !open)}
+              aria-label={searchOpen ? "Close search" : "Open search"}
+              aria-expanded={searchOpen}
+            >
+              {searchOpen ? (
+                <X className="size-5" />
+              ) : (
+                <Search className="size-5" />
+              )}
+            </Button>
+          ) : null}
 
           <NotificationBell />
 
@@ -151,22 +147,18 @@ export function Header({ title = "Dashboard", onMenuClick }: HeaderProps) {
 
       <div
         className={cn(
-          "overflow-hidden border-t border-border bg-card px-3 transition-[max-height,opacity] duration-200 md:hidden",
-          searchOpen ? "max-h-16 opacity-100" : "max-h-0 border-t-0 opacity-0",
+          "border-t border-border bg-card px-3 transition-all duration-200 md:hidden",
+          searchOpen ? "max-h-96 opacity-100 pb-2 overflow-visible" : "max-h-0 border-t-0 opacity-0 overflow-hidden",
         )}
       >
-        <div className="relative py-2">
-          <Search
-            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-            aria-hidden
-          />
-          <Input
-            ref={searchInputRef}
-            type="search"
-            placeholder="Search..."
-            className="h-12 w-full bg-muted/60 pl-9"
-            aria-label="Search dashboard"
-          />
+        <div className="py-2">
+          {searchOpen && (user?.role === "teacher" || user?.role === "admin") ? (
+            <GlobalSearch 
+              role={user.role} 
+              onCloseMobile={() => setSearchOpen(false)} 
+              autoFocus 
+            />
+          ) : null}
         </div>
       </div>
     </header>

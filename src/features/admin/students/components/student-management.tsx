@@ -23,6 +23,7 @@ import type {
 import type { Student, StudentInput } from "@/types/student";
 import { getStudentFullName } from "@/types/student";
 import { createStudentWithParentAccount } from "@/services/create-student-parent.service";
+import { exportToCSV } from "@/lib/utils/export";
 
 function editValuesToInput(values: StudentEditFormValues): StudentInput {
   return {
@@ -129,7 +130,6 @@ export function StudentManagement() {
   };
 
   const exportCsv = async () => {
-    const XLSX = await import("xlsx");
     const rows = students.map((s) => ({
       Name: getStudentFullName(s),
       Email: s.email,
@@ -138,10 +138,7 @@ export function StudentManagement() {
       Section: s.section,
       Status: s.status,
     }));
-    const sheet = XLSX.utils.json_to_sheet(rows);
-    const book = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(book, sheet, "Students");
-    XLSX.writeFile(book, "students-export.xlsx");
+    await exportToCSV(rows, "students-export.xlsx");
   };
 
   return (
