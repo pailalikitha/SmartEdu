@@ -59,8 +59,8 @@ export function examReadinessLabel(score: number): {
   label: string;
   color: string;
 } {
-  if (score >= 91) return { label: "Exam Ready!", color: "#16a34a" };
-  if (score >= 71) return { label: "Almost Ready", color: "#ca8a04" };
-  if (score >= 41) return { label: "Getting There", color: "#d97706" };
-  return { label: "Not Ready", color: "#dc2626" };
+  if (score >= 91) return { label: "Exam Ready!", color: "var(--success)" };
+  if (score >= 71) return { label: "Almost Ready", color: "var(--warning)" };
+  if (score >= 41) return { label: "Getting There", color: "var(--warning)" };
+  return { label: "Not Ready", color: "var(--destructive)" };
 }

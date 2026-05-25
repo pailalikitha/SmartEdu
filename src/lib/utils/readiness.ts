@@ -24,7 +24,7 @@ export function computeReadinessScore(
 
 export function getReadinessMeta(score: number | null) {
   if (score === null) {
-    return { label: "Not Ready", color: "hsl(var(--destructive))" };
+    return { label: "Not Ready", color: "var(--destructive)" };
   }
   const { label, color } = examReadinessLabel(score);
   return { label, color };

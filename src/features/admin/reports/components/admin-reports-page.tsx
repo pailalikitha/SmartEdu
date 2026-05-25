@@ -145,7 +145,7 @@ export function AdminReportsPage() {
               <XAxis dataKey="label" />
               <YAxis domain={[0, 100]} />
               <Tooltip />
-              <Bar dataKey="value" fill="#1a56a8" />
+              <Bar dataKey="value" fill="var(--primary)" />
             </BarChart>
           </ResponsiveContainer>
           </ChartSurface>
@@ -186,7 +186,7 @@ export function AdminReportsPage() {
                 <XAxis dataKey="month" />
                 <YAxis domain={[0, 100]} />
                 <Tooltip />
-                <Line type="monotone" dataKey="percent" stroke="#16a34a" />
+                <Line type="monotone" dataKey="percent" stroke="var(--success)" />
               </LineChart>
             </ResponsiveContainer>
             </ChartSurface>

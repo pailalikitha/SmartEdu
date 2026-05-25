@@ -18,9 +18,9 @@ import { formatPercentage } from "@/lib/utils/format";
 import type { SubjectAverage } from "@/lib/utils/subject-stats";
 
 function barFill(average: number): string {
-  if (average >= 75) return "hsl(var(--success))";
-  if (average >= 50) return "hsl(var(--warning))";
-  return "hsl(var(--destructive))";
+  if (average >= 75) return "var(--success)";
+  if (average >= 50) return "var(--warning)";
+  return "var(--destructive)";
 }
 
 type SubjectPerformanceChartProps = {
@@ -70,8 +70,8 @@ export function SubjectPerformanceChart({
                 tick={{ fontSize: 11 }}
               />
               <Tooltip formatter={(v) => [formatPercentage(Number(v)), "Average"]} />
-              <ReferenceLine x={60} stroke="#ca8a04" strokeDasharray="4 4" label="Pass" />
-              <ReferenceLine x={75} stroke="#16a34a" strokeDasharray="4 4" label="Good" />
+              <ReferenceLine x={60} stroke="var(--warning)" strokeDasharray="4 4" label="Pass" />
+              <ReferenceLine x={75} stroke="var(--success)" strokeDasharray="4 4" label="Good" />
               <Bar dataKey="average" radius={[0, 4, 4, 0]}>
                 {data.map((entry) => (
                   <Cell key={entry.subject} fill={barFill(entry.average)} />

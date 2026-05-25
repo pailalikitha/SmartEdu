@@ -54,7 +54,7 @@ export function Sidebar({
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-[min(80vw,280px)] max-w-[280px] flex-col border-r border-border bg-card shadow-xl transition-transform duration-300 ease-out",
+          "fixed inset-y-0 left-0 z-50 flex w-[min(80vw,280px)] max-w-[280px] flex-col border-r border-border bg-gradient-to-b from-secondary/40 to-background shadow-xl transition-transform duration-300 ease-out",
           "lg:static lg:z-auto lg:w-60 lg:max-w-none lg:translate-x-0 lg:shadow-none",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
         )}
@@ -92,13 +92,13 @@ export function Sidebar({
                 className={cn(
                   "relative flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-secondary text-secondary-foreground shadow-sm"
+                    ? "bg-accent text-accent-foreground shadow-sm"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}
               >
                 {isActive ? (
                   <span
-                    className="absolute top-1/2 left-0 h-6 w-1 -translate-y-1/2 rounded-r-full bg-primary"
+                    className="absolute top-1/2 left-0 h-6 w-1 -translate-y-1/2 rounded-r-full bg-warning"
                     aria-hidden
                   />
                 ) : null}

@@ -67,7 +67,7 @@ export function PerformanceTrendSection({
               />
               <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
               <Tooltip />
-              <ReferenceLine y={60} stroke="#ca8a04" strokeDasharray="4 4" />
+              <ReferenceLine y={60} stroke="var(--warning)" strokeDasharray="4 4" />
               <Legend />
               {subjects.map((subject, index) => (
                 <Line
