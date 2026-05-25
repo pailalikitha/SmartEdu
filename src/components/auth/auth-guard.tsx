@@ -36,9 +36,12 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
     }
 
     if (allowedRoles && !roleAllowed(user.role, allowedRoles)) {
+      console.log("AuthGuard role check failed. User role:", user.role);
       router.replace(getRoleHomePath(user.role));
       return;
     }
+
+    console.log("AuthGuard validated user role:", user.role);
 
     void getUserProfile(user.id).then((profile) => {
       if (profile && (profile as { status?: string }).status === "inactive") {
