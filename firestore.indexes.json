@@ -54,6 +54,23 @@
       "collectionGroup": "attendance",
       "queryScope": "COLLECTION",
       "fields": [
+        { "fieldPath": "yearMonth", "order": "ASCENDING" },
+        { "fieldPath": "grade", "order": "ASCENDING" },
+        { "fieldPath": "date", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "attendance",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "classKey", "order": "ASCENDING" },
+        { "fieldPath": "date", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "attendance",
+      "queryScope": "COLLECTION",
+      "fields": [
         { "fieldPath": "date", "order": "ASCENDING" },
         { "fieldPath": "grade", "order": "ASCENDING" }
       ]
