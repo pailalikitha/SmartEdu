@@ -21,7 +21,9 @@ import { useToast } from "@/components/ui/toast";
 import { COLLECTIONS } from "@/lib/firebase/firestore/constants";
 import { requireFirestore } from "@/lib/firebase/firestore/query";
 import { logSchoolActivity } from "@/services/school-activity.service";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { getSecondaryFirebaseAuth, getFirebaseDb } from "@/lib/firebase/client";
 import { exportToCSV } from "@/lib/utils/export";
 
 type TeacherRow = {
@@ -105,17 +107,42 @@ export function AdminTeachersPage() {
   const handleAdd = async () => {
     setSaving(true);
     try {
-      const res = await fetch("/api/admin/create-user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          role: "teacher",
-          displayName: form.name,
-        }),
+      const secondaryAuth = getSecondaryFirebaseAuth();
+      const db = getFirebaseDb();
+
+      const teacherCredential = await createUserWithEmailAndPassword(
+        secondaryAuth,
+        form.email,
+        form.password
+      );
+      const teacherUid = teacherCredential.user.uid;
+
+      await updateProfile(teacherCredential.user, {
+        displayName: form.name
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Create failed");
+
+      await setDoc(doc(db, "users", teacherUid), {
+        role: "teacher",
+        name: form.name,
+        email: form.email.toLowerCase().trim(),
+        createdAt: serverTimestamp(),
+        passwordChanged: false,
+        status: "active"
+      });
+
+      await setDoc(doc(db, COLLECTIONS.teachers, teacherUid), {
+        name: form.name,
+        email: form.email.toLowerCase().trim(),
+        subject: form.subject,
+        phone: form.phone,
+        uid: teacherUid,
+        createdAt: serverTimestamp(),
+        status: "active",
+        subjects: [form.subject]
+      });
+
+      await secondaryAuth.signOut();
+
       await logSchoolActivity({
         title: "Teacher added",
         description: `${form.name} (${form.email})`,

@@ -9,6 +9,8 @@ let app: FirebaseApp | undefined;
 let auth: Auth | undefined;
 let db: Firestore | undefined;
 let storage: FirebaseStorage | undefined;
+let secondaryApp: FirebaseApp | undefined;
+let secondaryAuth: Auth | undefined;
 
 function getFirebaseApp(): FirebaseApp {
   if (!isFirebaseConfigured()) {
@@ -43,4 +45,17 @@ export function getFirebaseStorage(): FirebaseStorage {
     storage = getStorage(getFirebaseApp());
   }
   return storage;
+}
+
+export function getSecondaryFirebaseAuth(): Auth {
+  if (!isFirebaseConfigured()) {
+    throw new Error("Firebase is not configured.");
+  }
+  if (!secondaryApp) {
+    secondaryApp = initializeApp(firebaseConfig, "Secondary");
+  }
+  if (!secondaryAuth) {
+    secondaryAuth = getAuth(secondaryApp);
+  }
+  return secondaryAuth;
 }
