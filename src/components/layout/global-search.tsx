@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, X, Loader2 } from "lucide-react";
 import { collection, query, where, limit, onSnapshot } from "firebase/firestore";
 import Link from "next/link";
@@ -44,7 +44,7 @@ export function GlobalSearch({ role, onCloseMobile, autoFocus }: GlobalSearchPro
   const isAdmin = role === "admin";
 
   const { classes } = useTeacherClassesSnapshot(isTeacher ? "current" : undefined);
-  const teacherClassIds = classes.map((c) => c.id);
+  const teacherClassIdsStr = useMemo(() => classes.map((c) => c.id).join(","), [classes]);
 
   useEffect(() => {
     if (autoFocus && inputRef.current) {
@@ -93,6 +93,8 @@ export function GlobalSearch({ role, onCloseMobile, autoFocus }: GlobalSearchPro
     // Capitalize first letter for first name search
     const capSearch = searchStr.charAt(0).toUpperCase() + searchStr.slice(1);
     const endStr = capSearch + "\uf8ff";
+    
+    const teacherClassIds = teacherClassIdsStr ? teacherClassIdsStr.split(",") : [];
 
     const unsubs: (() => void)[] = [];
     let students: SearchResult[] = [];
@@ -189,7 +191,7 @@ export function GlobalSearch({ role, onCloseMobile, autoFocus }: GlobalSearchPro
     }
 
     return () => unsubs.forEach((u) => u());
-  }, [debouncedTerm, isTeacher, isAdmin, teacherClassIds]);
+  }, [debouncedTerm, isTeacher, isAdmin, teacherClassIdsStr]);
 
   if (!isTeacher && !isAdmin) return null;
 
