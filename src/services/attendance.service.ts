@@ -68,12 +68,17 @@ export async function listAttendanceForStudent(
   studentId: string,
 ): Promise<AttendanceRecord[]> {
   const db = requireFirestore();
-  const q = query(
-    collection(db, COLLECTIONS.attendance),
-    where("studentId", "==", studentId),
-  );
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => mapAttendanceDoc(d.id, d.data()));
+  try {
+    const q = query(
+      collection(db, COLLECTIONS.attendance),
+      where("studentId", "==", studentId),
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => mapAttendanceDoc(d.id, d.data()));
+  } catch (error) {
+    console.error('Attendance query failed (listAttendanceForStudent):', error);
+    throw error;
+  }
 }
 
 /** Returns `null` when the student has no attendance records. */
@@ -102,9 +107,14 @@ export async function getAttendanceForDate(
     constraints.push(where("grade", "==", filters.grade));
   }
 
-  const q = query(collection(db, COLLECTIONS.attendance), ...constraints);
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => mapAttendanceDoc(d.id, d.data()));
+  try {
+    const q = query(collection(db, COLLECTIONS.attendance), ...constraints);
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => mapAttendanceDoc(d.id, d.data()));
+  } catch (error) {
+    console.error('Attendance query failed (getAttendanceForDate):', error);
+    throw error;
+  }
 }
 
 /** Indexed monthly partition — preferred over full collection scans */
@@ -125,16 +135,21 @@ export async function getAttendanceForMonth(
     constraints.push(where("grade", "==", filters.grade));
   }
 
-  const q = query(
-    collection(db, COLLECTIONS.attendance),
-    ...constraints,
-    orderBy("date", "asc"),
-  );
+  try {
+    const q = query(
+      collection(db, COLLECTIONS.attendance),
+      ...constraints,
+      orderBy("date", "asc"),
+    );
 
-  const snapshot = await getDocs(q);
-  return snapshot.docs
-    .map((d) => mapAttendanceDoc(d.id, d.data()))
-    .sort((a, b) => a.date.localeCompare(b.date));
+    const snapshot = await getDocs(q);
+    return snapshot.docs
+      .map((d) => mapAttendanceDoc(d.id, d.data()))
+      .sort((a, b) => a.date.localeCompare(b.date));
+  } catch (error) {
+    console.error('Attendance query failed (getAttendanceForMonth):', error);
+    throw error;
+  }
 }
 
 export async function getAttendanceInRange(
@@ -164,11 +179,16 @@ export async function getAttendanceInRange(
     );
   }
 
-  const q = query(collection(db, COLLECTIONS.attendance), ...constraints);
-  const snapshot = await getDocs(q);
-  return snapshot.docs
-    .map((d) => mapAttendanceDoc(d.id, d.data()))
-    .sort((a, b) => a.date.localeCompare(b.date));
+  try {
+    const q = query(collection(db, COLLECTIONS.attendance), ...constraints);
+    const snapshot = await getDocs(q);
+    return snapshot.docs
+      .map((d) => mapAttendanceDoc(d.id, d.data()))
+      .sort((a, b) => a.date.localeCompare(b.date));
+  } catch (error) {
+    console.error('Attendance query failed (getAttendanceInRange):', error);
+    throw error;
+  }
 }
 
 export async function upsertAttendance(input: AttendanceInput): Promise<void> {
