@@ -1,4 +1,4 @@
--{
+{
   "indexes": [
     {
       "collectionGroup": "students",
@@ -50,6 +50,24 @@
       "collectionGroup": "students",
       "queryScope": "COLLECTION",
       "fields": [
+        {
+          "fieldPath": "grade",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "students",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
         {
           "fieldPath": "grade",
           "order": "ASCENDING"
@@ -195,16 +213,6 @@
       ]
     },
     {
-      "collectionGroup": "logs",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "timestamp",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
       "collectionGroup": "students",
       "queryScope": "COLLECTION_GROUP",
       "fields": [
@@ -215,16 +223,6 @@
         {
           "fieldPath": "date",
           "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "logs",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "uploadedAt",
-          "order": "DESCENDING"
         }
       ]
     },

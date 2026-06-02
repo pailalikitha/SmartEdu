@@ -2,7 +2,6 @@ import {
   collection,
   doc,
   getDocs,
-  orderBy,
   query,
   serverTimestamp,
   type DocumentData,
@@ -136,11 +135,7 @@ export async function getAttendanceForMonth(
   }
 
   try {
-    const q = query(
-      collection(db, COLLECTIONS.attendance),
-      ...constraints,
-      orderBy("date", "asc"),
-    );
+    const q = query(collection(db, COLLECTIONS.attendance), ...constraints);
 
     const snapshot = await getDocs(q);
     return snapshot.docs
