@@ -1,0 +1,477 @@
+{
+  "status": "success",
+  "result": {
+    "indexes": [
+      {
+        "collectionGroup": "attendance",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "classId",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "date",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "attendance",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "classKey",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "date",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "attendance",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "date",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "classKey",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "attendance",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "date",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "grade",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "attendance",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "studentId",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "date",
+            "order": "DESCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "DESCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "attendance",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "yearMonth",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "classKey",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "date",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "attendance",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "yearMonth",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "date",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "attendance",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "yearMonth",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "grade",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "date",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "classes",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "teacherId",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "name",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "marks",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "studentId",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "date",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "students",
+        "queryScope": "COLLECTION_GROUP",
+        "fields": [
+          {
+            "fieldPath": "classId",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "date",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "students",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "classId",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "createdAt",
+            "order": "DESCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "DESCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "students",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "classKey",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "createdAt",
+            "order": "DESCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "DESCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "students",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "grade",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "createdAt",
+            "order": "DESCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "DESCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "students",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "status",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "class",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "students",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "status",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "classId",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "students",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "status",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "classKey",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "createdAt",
+            "order": "DESCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "DESCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "students",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "status",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "createdAt",
+            "order": "DESCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "DESCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "students",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "status",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "grade",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "createdAt",
+            "order": "DESCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "DESCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "studyTasks",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "studentId",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "completed",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "dueDate",
+            "order": "DESCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "DESCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "studyTasks",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "studentId",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "date",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "studyTasks",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "studentId",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "scheduledDate",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "startTime",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      },
+      {
+        "collectionGroup": "studyTasks",
+        "queryScope": "COLLECTION",
+        "fields": [
+          {
+            "fieldPath": "studentId",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "weekKey",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "scheduledDate",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "startTime",
+            "order": "ASCENDING"
+          },
+          {
+            "fieldPath": "__name__",
+            "order": "ASCENDING"
+          }
+        ],
+        "density": "SPARSE_ALL"
+      }
+    ],
+    "fieldOverrides": []
+  }
+}

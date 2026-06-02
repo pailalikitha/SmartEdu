@@ -172,8 +172,8 @@ async function getStudentClassAttendanceRecords(
   const db = requireFirestore();
   const groupQuery = query(
     collectionGroup(db, ATTENDANCE_SUBCOLLECTIONS.students),
-    firestoreWhere("studentId", "==", studentId),
     firestoreWhere("classId", "==", classId),
+    firestoreWhere("studentId", "==", studentId),
   );
   const snapshot = await getDocs(groupQuery);
   return snapshot.docs.map((d) => mapClassAttendance(d.data(), d.id));

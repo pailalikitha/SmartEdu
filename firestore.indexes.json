@@ -227,6 +227,20 @@
       ]
     },
     {
+      "collectionGroup": "students",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        {
+          "fieldPath": "classId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "studentId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
       "collectionGroup": "studyTasks",
       "queryScope": "COLLECTION",
       "fields": [
