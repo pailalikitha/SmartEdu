@@ -1,6 +1,7 @@
+import Groq from "groq-sdk";
 import { NextResponse } from "next/server";
 
-const GEMINI_FLASH_MODEL = "gemini-2.5-flash";
+const GROQ_MODEL = "llama-3.1-8b-instant";
 
 type AnthropicRequestBody = {
   model?: string;
@@ -9,34 +10,12 @@ type AnthropicRequestBody = {
   messages: { role: string; content: string }[];
 };
 
-type GeminiContent = {
-  role: "user" | "model";
-  parts: { text: string }[];
-};
-
-type GeminiGenerateResponse = {
-  candidates?: {
-    content?: {
-      parts?: { text?: string }[];
-    };
-  }[];
-  error?: {
-    message?: string;
-    code?: number;
-    status?: string;
-  };
-};
-
-function toGeminiRole(role: string): "user" | "model" {
-  return role === "assistant" ? "model" : "user";
-}
-
-function toAnthropicShapedResponse(text: string) {
+function toAnthropicShapedResponse(text: string, modelName: string) {
   return {
-    id: "msg_gemini",
+    id: "msg_groq",
     type: "message",
     role: "assistant",
-    model: GEMINI_FLASH_MODEL,
+    model: modelName,
     content: [{ type: "text", text }],
     stop_reason: "end_turn",
     usage: { input_tokens: 0, output_tokens: 0 },
@@ -44,10 +23,10 @@ function toAnthropicShapedResponse(text: string) {
 }
 
 export async function POST(request: Request) {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
-      { error: "GEMINI_API_KEY is not configured on the server." },
+      { error: "GROQ_API_KEY is not configured on the server." },
       { status: 503 },
     );
   }
@@ -66,69 +45,54 @@ export async function POST(request: Request) {
     );
   }
 
-  const contents: GeminiContent[] = body.messages.map((message) => ({
-    role: toGeminiRole(message.role),
-    parts: [{ text: message.content }],
-  }));
-
-  const geminiBody: Record<string, unknown> = {
-    contents,
-    generationConfig: {
-      maxOutputTokens: body.max_tokens ?? 1000,
-    },
-  };
+  const groqMessages: Groq.Chat.ChatCompletionMessageParam[] = [];
 
   if (body.system?.trim()) {
-    geminiBody.systemInstruction = {
-      parts: [{ text: body.system }],
-    };
+    groqMessages.push({ role: "system", content: body.system });
   }
 
-  const model =
-    body.model?.startsWith("gemini-") === true ? body.model : GEMINI_FLASH_MODEL;
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+  groqMessages.push(
+    ...body.messages.map((message) => ({
+      role: message.role as "user" | "assistant",
+      content: message.content,
+    })),
+  );
+
+  const modelName = GROQ_MODEL;
+  console.log("Using Groq model:", modelName);
+
+  const groq = new Groq({ apiKey });
 
   try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": apiKey,
-      },
-      body: JSON.stringify(geminiBody),
+    const completion = await groq.chat.completions.create({
+      model: modelName,
+      messages: groqMessages,
+      max_tokens: body.max_tokens ?? 1000,
     });
 
-    const data = (await response.json()) as GeminiGenerateResponse;
+    const text = completion.choices[0]?.message?.content;
 
-    if (!response.ok) {
-      const errorData = data;
-      console.error("Gemini error response:", JSON.stringify(errorData, null, 2));
-      console.log("GEMINI_API_KEY present:", !!process.env.GEMINI_API_KEY);
-      console.log("Gemini model:", model);
-      const message =
-        typeof data?.error?.message === "string"
-          ? data.error.message
-          : "Gemini API error.";
-      return NextResponse.json({ error: message }, { status: response.status });
-    }
-
-    const text = data.candidates?.[0]?.content?.parts
-      ?.map((part) => part.text ?? "")
-      .join("");
-
-    if (!text) {
+    if (!text || typeof text !== "string" || !text.trim()) {
       return NextResponse.json(
-        { error: "Empty AI response from Gemini." },
+        { error: "Empty AI response from Groq." },
         { status: 502 },
       );
     }
 
-    return NextResponse.json(toAnthropicShapedResponse(text));
+    return NextResponse.json(toAnthropicShapedResponse(text, modelName));
   } catch (err) {
-    console.error("[/api/anthropic] Gemini request failed:", err);
-    return NextResponse.json(
-      { error: "Failed to reach Gemini API." },
-      { status: 502 },
-    );
+    console.error("[/api/anthropic] Groq request failed:", err);
+
+    const message =
+      err instanceof Groq.APIError
+        ? err.message
+        : err instanceof Error
+          ? err.message
+          : "Groq API error.";
+
+    const status =
+      err instanceof Groq.APIError && err.status ? err.status : 502;
+
+    return NextResponse.json({ error: message }, { status });
   }
 }

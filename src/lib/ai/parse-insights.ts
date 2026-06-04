@@ -138,7 +138,7 @@ function parseByNewlines(text: string): string[] {
 }
 
 /**
- * Normalizes Gemini/LLM insight responses into human-readable strings.
+ * Normalizes LLM insight responses into human-readable strings.
  */
 export function parseInsights(rawText: string): string[] {
   const text = stripCodeBlocks(rawText.trim());
