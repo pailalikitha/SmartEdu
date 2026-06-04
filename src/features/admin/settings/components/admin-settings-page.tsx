@@ -18,13 +18,20 @@ import {
   type SchoolSettings,
 } from "@/types/settings";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { useAuth } from "@/hooks/use-auth";
+import { migrateMisplacedMarksEntries } from "@/services/migrate-marks.service";
 
 export function AdminSettingsPage() {
   const { toast } = useToast();
+  const { role } = useAuth();
   const [settings, setSettings] = useState<SchoolSettings>(DEFAULT_SCHOOL_SETTINGS);
   const [isLoading, setIsLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [migratingMarks, setMigratingMarks] = useState(false);
+  const [marksMigrationSummary, setMarksMigrationSummary] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     const unsubscribe = subscribeSchoolSettings(
@@ -158,6 +165,71 @@ export function AdminSettingsPage() {
           </Button>
         </CardContent>
       </Card>
+
+      {role === "admin" ? (
+        <Card>
+          <CardContent className="max-w-lg space-y-4 py-6">
+            <div>
+              <h2 className="text-lg font-semibold">Marks data maintenance</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                One-time fix: moves mark entries from legacy paths (e.g. roll
+                numbers like marks/16/entries) to canonical student paths
+                (marks/`studentDocId`/entries). Run once, then verify
+                student analytics.
+              </p>
+            </div>
+            {marksMigrationSummary ? (
+              <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                {marksMigrationSummary}
+              </p>
+            ) : null}
+            <Button
+              variant="outline"
+              isLoading={migratingMarks}
+              disabled={migratingMarks}
+              onClick={() => {
+                void (async () => {
+                  setMigratingMarks(true);
+                  setMarksMigrationSummary(null);
+                  try {
+                    const result = await migrateMisplacedMarksEntries();
+                    const lines = [
+                      `Moved ${result.entriesMoved} entries across ${result.parentsMigrated.length} student(s).`,
+                      ...result.parentsMigrated.map(
+                        (m) => `${m.from} -> ${m.to}: ${m.count} entries`,
+                      ),
+                      ...(result.errors.length > 0
+                        ? ["Errors:", ...result.errors]
+                        : []),
+                    ];
+                    const message = lines.join("\n");
+                    setMarksMigrationSummary(message);
+                    toast({
+                      variant:
+                        result.errors.length > 0 ? "error" : "success",
+                      title:
+                        result.entriesMoved > 0
+                          ? `Marks migration completed: ${message}`
+                          : `No misplaced marks found. ${message}`,
+                    });
+                  } catch (err) {
+                    const msg =
+                      err instanceof Error
+                        ? err.message
+                        : "Marks migration failed";
+                    setMarksMigrationSummary(msg);
+                    toast({ variant: "error", title: msg });
+                  } finally {
+                    setMigratingMarks(false);
+                  }
+                })();
+              }}
+            >
+              Fix Existing Marks Data
+            </Button>
+          </CardContent>
+        </Card>
+      ) : null}
     </div>
   );
 }

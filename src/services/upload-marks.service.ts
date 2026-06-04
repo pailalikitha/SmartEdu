@@ -6,6 +6,11 @@ import {
 } from "@/lib/firebase/firestore/constants";
 import { runBatchedSet } from "@/lib/firebase/firestore/helpers";
 import { requireFirestore } from "@/lib/firebase/firestore/query";
+import {
+  getCanonicalMarksStudentId,
+  logMarksIdResolution,
+  resolveStudentByCsvId,
+} from "@/services/marks-student-resolver.service";
 import type { MarksCsvRow, UploadResultSummary } from "@/types/upload";
 
 function computeScore(marksObtained: number, totalMarks: number): number {
@@ -30,14 +35,39 @@ export async function uploadMarksRows(
     merge?: boolean;
   }> = [];
 
+  const resolvedCanonicalByCsv = new Map<string, string>();
+  const loggedResolutions = new Set<string>();
+
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
+    const csvId = row.studentId.trim();
+
     try {
+      let canonicalId = resolvedCanonicalByCsv.get(csvId);
+      if (!canonicalId) {
+        const student = await resolveStudentByCsvId(csvId);
+        if (!student) {
+          summary.failureCount += 1;
+          summary.errors.push(
+            `Row ${i + 2}: No student found for studentId "${csvId}" (checked document ID, authUserId, rollNumber, rollNo).`,
+          );
+          continue;
+        }
+        canonicalId = getCanonicalMarksStudentId(student);
+        resolvedCanonicalByCsv.set(csvId, canonicalId);
+
+        const logKey = `${csvId}->${canonicalId}`;
+        if (!loggedResolutions.has(logKey)) {
+          logMarksIdResolution(csvId, canonicalId);
+          loggedResolutions.add(logKey);
+        }
+      }
+
       const ref = doc(
         collection(
           db,
           COLLECTIONS.marks,
-          row.studentId,
+          canonicalId,
           STUDENT_SUBCOLLECTIONS.markEntries,
         ),
       );
@@ -65,6 +95,10 @@ export async function uploadMarksRows(
     }
   }
 
+  if (operations.length === 0) {
+    return summary;
+  }
+
   try {
     await runBatchedSet(db, operations);
 
@@ -74,8 +108,12 @@ export async function uploadMarksRows(
     >();
 
     for (const row of rows) {
+      const csvId = row.studentId.trim();
+      const canonicalId = resolvedCanonicalByCsv.get(csvId);
+      if (!canonicalId) continue;
+
       const pct = computeScore(row.marksObtained, row.totalMarks);
-      const key = `${row.studentId}::${row.subject}`;
+      const key = `${canonicalId}::${row.subject}`;
       const current = byStudentSubject.get(key) ?? {
         subject: row.subject,
         scores: [],
