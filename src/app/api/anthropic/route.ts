@@ -101,6 +101,10 @@ export async function POST(request: Request) {
     const data = (await response.json()) as GeminiGenerateResponse;
 
     if (!response.ok) {
+      const errorData = data;
+      console.error("Gemini error response:", JSON.stringify(errorData, null, 2));
+      console.log("GEMINI_API_KEY present:", !!process.env.GEMINI_API_KEY);
+      console.log("Gemini model:", model);
       const message =
         typeof data?.error?.message === "string"
           ? data.error.message
@@ -120,7 +124,8 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(toAnthropicShapedResponse(text));
-  } catch {
+  } catch (err) {
+    console.error("[/api/anthropic] Gemini request failed:", err);
     return NextResponse.json(
       { error: "Failed to reach Gemini API." },
       { status: 502 },
