@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const GEMINI_FLASH_MODEL = "gemini-2.0-flash";
+const GEMINI_FLASH_MODEL = "gemini-2.5-flash";
 
 type AnthropicRequestBody = {
   model?: string;
