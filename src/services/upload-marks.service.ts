@@ -58,7 +58,7 @@ export async function uploadMarksRows(
 
         const logKey = `${csvId}->${canonicalId}`;
         if (!loggedResolutions.has(logKey)) {
-          logMarksIdResolution(csvId, canonicalId);
+          logMarksIdResolution("upload", csvId, canonicalId);
           loggedResolutions.add(logKey);
         }
       }

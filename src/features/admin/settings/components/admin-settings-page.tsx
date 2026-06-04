@@ -194,10 +194,16 @@ export function AdminSettingsPage() {
                   try {
                     const result = await migrateMisplacedMarksEntries();
                     const lines = [
-                      `Moved ${result.entriesMoved} entries across ${result.parentsMigrated.length} student(s).`,
+                      `Parents scanned: ${result.parentsScanned}`,
+                      `Migrated: ${result.entriesMoved} entries across ${result.migratedParents} parent(s)`,
+                      `Skipped: ${result.skippedCount}`,
+                      `Errors: ${result.errors.length}`,
                       ...result.parentsMigrated.map(
                         (m) => `${m.from} -> ${m.to}: ${m.count} entries`,
                       ),
+                      ...(result.logs.length > 0
+                        ? ["Details:", ...result.logs]
+                        : []),
                       ...(result.errors.length > 0
                         ? ["Errors:", ...result.errors]
                         : []),
