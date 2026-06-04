@@ -34,7 +34,7 @@ import {
 } from "@/features/teacher/utils/teacher-analytics";
 import { useAuth } from "@/hooks/use-auth";
 import { callAnthropic } from "@/lib/ai/anthropic-client";
-import { parseJsonStringArray } from "@/lib/ai/parse-json-array";
+import { parseInsights } from "@/lib/ai/parse-insights";
 import { formatPercentage } from "@/lib/utils/format";
 import { getStudentFullName } from "@/types/student";
 import { sendTeacherAlertNotification } from "@/services/notifications.service";
@@ -85,6 +85,7 @@ export function TeacherAnalyticsPage() {
   }, [trendData]);
 
   const [insights, setInsights] = useState<string[]>([]);
+  const [insightsFailed, setInsightsFailed] = useState(false);
   const [loadingInsights, setLoadingInsights] = useState(false);
   const [notifyingId, setNotifyingId] = useState<string | null>(null);
 
@@ -97,17 +98,45 @@ export function TeacherAnalyticsPage() {
 
   const generateInsights = async () => {
     setLoadingInsights(true);
+    setInsightsFailed(false);
     try {
       const text = await callAnthropic({
         messages: [
           {
             role: "user",
-            content: `Teacher's class analytics data: Total students: ${analytics.totalStudents}, Class average: ${analytics.classAverage ?? "N/A"}%, Attendance rate: ${analytics.attendanceRate ?? "N/A"}%, At-risk students: ${analytics.atRisk.length}, Subject averages: ${JSON.stringify(analytics.subjectAverages.map((s) => ({ subject: s.subject, average: s.average })))}. Give 5 specific, actionable recommendations for this teacher to improve student outcomes. Be direct and practical. Return as JSON array of 5 strings.`,
+            content: `Teacher's class analytics data: Total students: ${analytics.totalStudents}, Class average: ${analytics.classAverage ?? "N/A"}%, Attendance rate: ${analytics.attendanceRate ?? "N/A"}%, At-risk students: ${analytics.atRisk.length}, Subject averages: ${JSON.stringify(analytics.subjectAverages.map((s) => ({ subject: s.subject, average: s.average })))}.
+
+Give 5 specific, actionable educational insights for this teacher to improve student outcomes. Be direct and practical.
+
+Return exactly 5 educational insights.
+
+Requirements:
+- Plain text only
+- No JSON
+- No markdown
+- No code blocks
+
+Format exactly:
+
+1. First insight
+2. Second insight
+3. Third insight
+4. Fourth insight
+5. Fifth insight`,
           },
         ],
       });
-      setInsights(parseJsonStringArray(text).slice(0, 5));
+      const parsed = parseInsights(text).slice(0, 5);
+      if (parsed.length === 0) {
+        setInsights([]);
+        setInsightsFailed(true);
+      } else {
+        setInsights(parsed);
+        setInsightsFailed(false);
+      }
     } catch (err) {
+      setInsights([]);
+      setInsightsFailed(true);
       toast({
         title:
           err instanceof Error ? err.message : "Could not generate insights.",
@@ -420,10 +449,24 @@ export function TeacherAnalyticsPage() {
             </Button>
           ) : null}
         </div>
-        {insights.length > 0 ? (
+        {insightsFailed ? (
+          <div className="flex flex-col items-start gap-3 rounded-xl border border-border bg-muted/30 p-4">
+            <p className="text-sm text-muted-foreground">
+              Unable to generate insights at this time.
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => void generateInsights()}
+              isLoading={loadingInsights}
+            >
+              Retry
+            </Button>
+          </div>
+        ) : insights.length > 0 ? (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {insights.map((text, i) => (
-              <Card key={text}>
+              <Card key={`insight-${i}-${text.slice(0, 24)}`}>
                 <CardContent className="flex gap-3 pt-1">
                   <Lightbulb className="mt-0.5 size-5 shrink-0 text-warning" />
                   <div>
