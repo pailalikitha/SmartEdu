@@ -13,7 +13,10 @@ import { PerformanceTrendSection } from "@/features/student-analytics/components
 import { SubjectPerformanceChart } from "@/features/student-analytics/components/subject-performance-chart";
 import { ParentAlertSettingsInline } from "@/features/parent/components/parent-alert-settings-inline";
 import { useParentContext } from "@/contexts/parent-context";
-import { useStudentAnalytics } from "@/hooks/use-student-analytics";
+import {
+  useStudentAnalytics,
+  type StudentAnalyticsResult,
+} from "@/hooks/use-student-analytics";
 import { useStudentAssignmentsSnapshot } from "@/hooks/use-student-assignments-snapshot";
 import { useUserProfileSnapshot } from "@/hooks/use-user-profile-snapshot";
 import { useAuth } from "@/hooks/use-auth";
@@ -22,7 +25,40 @@ import { formatPercentage } from "@/lib/utils/format";
 import { getStudentFullName } from "@/types/student";
 
 function sessionSummaryKey(studentId: string) {
-  return `smartedu-parent-summary-${studentId}`;
+  return `smartedu-parent-summary-v2-${studentId}`;
+}
+
+function buildParentSummaryPrompt(analytics: StudentAnalyticsResult): string {
+  const overall =
+    analytics.overallAverage !== null
+      ? `${analytics.overallAverage}%`
+      : "N/A";
+  const attendance =
+    analytics.attendanceRate !== null
+      ? `${analytics.attendanceRate}%`
+      : "N/A";
+
+  const formatSubjects = (subjects: StudentAnalyticsResult["strongSubjects"]) =>
+    subjects.length > 0
+      ? subjects.map((s) => `${s.subject} ${s.average}%`).join(", ")
+      : "none yet";
+
+  const strongSubjects = formatSubjects(analytics.strongSubjects);
+  const weakSubjects = formatSubjects(analytics.weakSubjects);
+
+  return [
+    "Here is the student's performance data:",
+    `Overall: ${overall}, Attendance: ${attendance}.`,
+    `Strong subjects: ${strongSubjects}.`,
+    `Subjects needing support: ${weakSubjects}.`,
+    "Please summarize this in 3 short encouraging sentences for the parent.",
+  ].join("\n");
+}
+
+function hasPerformanceData(analytics: StudentAnalyticsResult): boolean {
+  return (
+    analytics.marksEntries.length > 0 || analytics.attendanceRecords.length > 0
+  );
 }
 
 export function ParentHomeDashboard() {
@@ -53,7 +89,13 @@ export function ParentHomeDashboard() {
   }, [analytics.marksEntries.length, analytics.attendanceRecords.length]);
 
   useEffect(() => {
+    summaryLoaded.current = false;
+    setAiSummary(null);
+  }, [studentId]);
+
+  useEffect(() => {
     if (!studentId || analytics.loading || summaryLoaded.current) return;
+    if (!hasPerformanceData(analytics)) return;
 
     const cached =
       typeof sessionStorage !== "undefined"
@@ -75,16 +117,10 @@ export function ParentHomeDashboard() {
     summaryLoaded.current = true;
     setLoadingSummary(true);
 
-    const strong = analytics.strongSubjects.map((s) => s.subject).join(", ");
-    const weak = analytics.weakSubjects.map((s) => s.subject).join(", ");
+    const prompt = buildParentSummaryPrompt(analytics);
 
     void callAnthropic({
-      messages: [
-        {
-          role: "user",
-          content: `Summarize this student's performance for their parent in 3 simple encouraging sentences using: overall average ${analytics.overallAverage ?? "N/A"}%, attendance ${analytics.attendanceRate ?? "N/A"}%, strong subjects ${strong || "none yet"}, weak subjects ${weak || "none"}.`,
-        },
-      ],
+      messages: [{ role: "user", content: prompt }],
     })
       .then((text) => {
         const trimmed = text.trim();
@@ -98,6 +134,8 @@ export function ParentHomeDashboard() {
   }, [
     studentId,
     analytics.loading,
+    analytics.marksEntries.length,
+    analytics.attendanceRecords.length,
     analytics.overallAverage,
     analytics.attendanceRate,
     analytics.strongSubjects,
